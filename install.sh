@@ -29,7 +29,7 @@ print_banner() {
     echo "  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   "
     echo -e "${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.1  •  AUTOMATED SCRAPER & HEALTH CHECKER${NC}"
+    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.2  •  AUTOMATED SCRAPER & HEALTH CHECKER${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}\n"
 }
 
@@ -192,31 +192,33 @@ fi
 export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 
 # --- Inline Interactive Prompt Helper ---
-prompt_input() {
-    local label="$1"
-    local default_val="$2"
-    local result=""
+read_input() {
+    local var_name="$1"
+    local label="$2"
+    local default_val="$3"
+    local user_val=""
 
     if [[ -n "$default_val" ]]; then
-        printf "   ${WHITE}▶${NC} %s ${GRAY}[${default_val}]${NC}: ${MINT}" "$label" > /dev/tty 2>/dev/null || printf "   ${WHITE}▶${NC} %s ${GRAY}[${default_val}]${NC}: ${MINT}" "$label"
+        echo -ne "   ${WHITE}▶${NC} ${label} ${GRAY}[Default: ${default_val}]${NC}: ${MINT}"
     else
-        printf "   ${WHITE}▶${NC} %s: ${MINT}" "$label" > /dev/tty 2>/dev/null || printf "   ${WHITE}▶${NC} %s: ${MINT}" "$label"
+        echo -ne "   ${WHITE}▶${NC} ${label}: ${MINT}"
     fi
 
     if [ -t 0 ]; then
-        read -r result || true
-    elif [ -r /dev/tty ]; then
-        read -r result < /dev/tty || true
+        read -r user_val || true
+    elif [ -c /dev/tty ]; then
+        read -r user_val < /dev/tty || true
     else
-        result=""
+        read -r user_val || true
     fi
-    printf "${NC}" > /dev/tty 2>/dev/null || printf "${NC}"
+    echo -ne "${NC}"
 
-    result="$(echo "${result}" | tr -d '\r\n')"
-    if [[ -z "$result" ]]; then
-        result="$default_val"
+    user_val="$(echo "${user_val}" | tr -d '\r\n')"
+    if [[ -z "$user_val" ]]; then
+        user_val="$default_val"
     fi
-    echo "$result"
+
+    printf -v "$var_name" '%s' "$user_val"
 }
 
 # --- Deployment Configuration Setup ---
@@ -228,7 +230,9 @@ echo -e "   ${CYAN}1)${NC} ${WHITE}IP Address Mode${NC}  ${GRAY}— Standard HTT
 echo -e "   ${CYAN}2)${NC} ${WHITE}Domain Mode${NC}      ${GRAY}— HTTPS with Automatic Let's Encrypt SSL (Port 443)${NC}"
 echo ""
 
-DEPLOY_MODE="$(prompt_input "Select deployment mode (1 or 2)" "1")"
+DEPLOY_MODE="1"
+read_input DEPLOY_MODE "Select deployment mode (1 or 2)" "1"
+
 if [[ "$DEPLOY_MODE" != "1" && "$DEPLOY_MODE" != "2" ]]; then
     DEPLOY_MODE="1"
 fi
@@ -240,28 +244,28 @@ AUTO_SSL=false
 
 if [[ "$DEPLOY_MODE" == "2" ]]; then
     echo ""
-    SERVER_DOMAIN="$(prompt_input "Enter domain pointed to this server (e.g. proxy.mysite.com)" "")"
+    read_input SERVER_DOMAIN "Enter domain pointed to this server (e.g. proxy.mysite.com)" ""
     SERVER_DOMAIN=$(echo "$SERVER_DOMAIN" | sed -e 's|^https://||' -e 's|^http://||' -e 's|/$||' | tr -d ' ')
 
     if [[ -z "$SERVER_DOMAIN" ]]; then
-        echo -e "   ${YELLOW}⚠ No domain provided. Defaulting to IP Address Mode on port 8080...${NC}"
+        echo -e "   ${YELLOW}⚠ No domain entered. Defaulting to IP Address Mode on port 8080...${NC}"
         DEPLOY_MODE="1"
         SERVER_PORT="8080"
         AUTO_SSL=false
     else
-        SERVER_EMAIL="$(prompt_input "Enter admin email for SSL renewal (Optional)" "")"
+        read_input SERVER_EMAIL "Enter admin email for SSL renewal (Optional)" ""
         SERVER_EMAIL=$(echo "$SERVER_EMAIL" | tr -d ' ')
         AUTO_SSL=true
         SERVER_PORT="443"
     fi
 else
     echo ""
-    SERVER_PORT="$(prompt_input "Enter HTTP port to bind" "8080")"
+    read_input SERVER_PORT "Enter HTTP port to bind" "8080"
     SERVER_PORT="${SERVER_PORT:-8080}"
 fi
 
 echo ""
-echo -e "   ${GREEN}✓${NC} Configuration set: Mode=${DEPLOY_MODE}, Domain='${SERVER_DOMAIN:-N/A}', Port=${SERVER_PORT}"
+echo -e "   ${GREEN}✓${NC} Configuration set: Mode=${WHITE}${DEPLOY_MODE}${NC}, Domain='${WHITE}${SERVER_DOMAIN:-N/A}${NC}', Port=${WHITE}${SERVER_PORT}${NC}"
 
 # --- Setup Target Directory & Source Code ---
 echo ""
