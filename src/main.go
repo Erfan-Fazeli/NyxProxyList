@@ -104,39 +104,42 @@ func saveServerConfig(cfg ServerConfig) {
 }
 
 func printBanner(cfg ServerConfig) {
-	mint := color.New(color.FgHiGreen, color.Bold)
-	cyan := color.New(color.FgHiCyan, color.Bold)
-	steel := color.New(color.FgWhite, color.Bold)
+	mintColor := "\033[38;2;0;245;155m"
+	grayColor := "\033[0;90m"
+	whiteColor := "\033[1;37m"
+	cyanColor := "\033[0;36m"
+	resetColor := "\033[0m"
 
 	fmt.Println()
-	mint.Println("  ███╗   ██╗██╗   ██╗██╗  ██╗    ██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗")
-	mint.Println("  ████╗  ██║╚██╗ ██╔╝╚██╗██╔╝    ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝")
-	cyan.Println("  ██╔██╗ ██║ ╚████╔╝  ╚███╔╝     ██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ ")
-	cyan.Println("  ██║╚██╗██║  ╚██╔╝   ██╔██╗     ██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  ")
-	steel.Println("  ██║ ╚████║   ██║   ██╔╝ ██╗    ██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   ")
-	steel.Println("  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ")
-	fmt.Println()
-	color.HiBlack("  ─────────────────────────────────────────────────────────────────────────────")
-	color.HiGreen("   ⚡ NYX PROXY  •  AUTOMATED PROXY SCRAPER & REAL-TIME HEALTH CHECKER         ")
-	color.HiBlack("  ─────────────────────────────────────────────────────────────────────────────")
+	fmt.Printf("%s", mintColor)
+	fmt.Println("  ███╗   ██╗██╗   ██╗██╗  ██╗    ██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗")
+	fmt.Println("  ████╗  ██║╚██╗ ██╔╝╚██╗██╔╝    ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝")
+	fmt.Println("  ██╔██╗ ██║ ╚████╔╝  ╚███╔╝     ██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ ")
+	fmt.Println("  ██║╚██╗██║  ╚██╔╝   ██╔██╗     ██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  ")
+	fmt.Println("  ██║ ╚████║   ██║   ██╔╝ ██╗    ██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   ")
+	fmt.Println("  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ")
+	fmt.Printf("%s", resetColor)
+	fmt.Printf("%s  ─────────────────────────────────────────────────────────────────────────────%s\n", grayColor, resetColor)
+	fmt.Printf("   %s⚡ NYX PROXY LIST TOOLS  •  AUTOMATED SCRAPER & REAL-TIME HEALTH CHECKER%s\n", mintColor, resetColor)
+	fmt.Printf("%s  ─────────────────────────────────────────────────────────────────────────────%s\n", grayColor, resetColor)
 
 	if cfg.Domain != "" {
-		fmt.Printf("   %s https://%s/       %s https://%s/docs\n",
-			color.HiCyanString("• Web Dashboard:"), cfg.Domain,
-			color.HiCyanString("• API Docs:"), cfg.Domain)
-		fmt.Printf("   %s Port 443 (Auto-SSL)      %s Port 80 (HTTP-01 & Redirect)\n",
-			color.HiGreenString("• TLS Security :"),
-			color.HiGreenString("• ACME Auth    :"))
+		fmt.Printf("   %s• Web Dashboard:%s %shttps://%s/%s       %s• API Docs:%s %shttps://%s/docs%s\n",
+			cyanColor, resetColor, mintColor, cfg.Domain, resetColor,
+			cyanColor, resetColor, cyanColor, cfg.Domain, resetColor)
+		fmt.Printf("   %s• TLS Security :%s %sPort 443 (Auto-SSL)%s      %s• ACME Auth:%s %sPort 80 (HTTP-01)%s\n",
+			mintColor, resetColor, whiteColor, resetColor,
+			mintColor, resetColor, whiteColor, resetColor)
 	} else {
-		fmt.Printf("   %s http://127.0.0.1:%s/       %s http://127.0.0.1:%s/docs\n",
-			color.HiCyanString("• Web Dashboard:"), cfg.Port,
-			color.HiCyanString("• API Docs:"), cfg.Port)
+		fmt.Printf("   %s• Web Dashboard:%s %shttp://127.0.0.1:%s/%s       %s• API Docs:%s %shttp://127.0.0.1:%s/docs%s\n",
+			cyanColor, resetColor, mintColor, cfg.Port, resetColor,
+			cyanColor, resetColor, cyanColor, cfg.Port, resetColor)
 	}
 
-	fmt.Printf("   %s data/live_pool.json       %s data/proxy_source.txt\n",
-		color.HiBlackString("• Pool Storage :"),
-		color.HiBlackString("• Sources File :"))
-	color.HiBlack("  ─────────────────────────────────────────────────────────────────────────────\n")
+	fmt.Printf("   %s• Storage File :%s %sdata/live_pool.json%s       %s• Sources :%s %sdata/proxy_source.txt%s\n",
+		grayColor, resetColor, whiteColor, resetColor,
+		grayColor, resetColor, whiteColor, resetColor)
+	fmt.Printf("%s  ─────────────────────────────────────────────────────────────────────────────%s\n\n", grayColor, resetColor)
 }
 
 func main() {
