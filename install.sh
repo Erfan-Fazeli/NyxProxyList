@@ -75,10 +75,42 @@ elif command -v apk &>/dev/null; then
 fi
 
 # --- Golang Verification & Multi-Strategy Auto-Installer ---
-install_golang() {
-    echo -e "${YELLOW} [*] Resolving and installing Golang compiler...${NC}"
+is_go_version_valid() {
+    export PATH="/usr/local/go/bin:/snap/bin:$PATH"
+    if ! command -v go &>/dev/null; then
+        return 1
+    fi
+    local ver_str
+    ver_str=$(go version 2>/dev/null | awk '{print $3}' | sed 's/go//')
+    if [[ -z "$ver_str" ]]; then
+        return 1
+    fi
+    local major minor
+    major=$(echo "$ver_str" | cut -d. -f1)
+    minor=$(echo "$ver_str" | cut -d. -f2)
+    if [[ "$major" =~ ^[0-9]+$ && "$minor" =~ ^[0-9]+$ ]]; then
+        if [[ "$major" -gt 1 ]] || [[ "$major" -eq 1 && "$minor" -ge 22 ]]; then
+            return 0
+        fi
+    fi
+    return 1
+}
 
-    # Strategy 1: System Package Manager (Apt / Dnf / Yum / Pacman / Apk)
+install_golang() {
+    echo -e "${YELLOW} [*] Resolving and installing modern Golang compiler (>= 1.22)...${NC}"
+
+    # Strategy 1: Snap Package Manager (if available, usually modern >= 1.22)
+    if command -v snap &>/dev/null; then
+        echo -e "${CYAN} [*] Trying Snap package manager...${NC}"
+        snap install go --classic >/dev/null 2>&1 || true
+        export PATH="/snap/bin:$PATH"
+        if is_go_version_valid; then
+            echo -e "${GREEN} [✓] Modern Golang installed via Snap: $(go version | awk '{print $3}')${NC}"
+            return 0
+        fi
+    fi
+
+    # Strategy 2: System Package Manager (Apt / Dnf / Yum / Pacman / Apk)
     echo -e "${CYAN} [*] Trying system package manager...${NC}"
     if command -v apt-get &>/dev/null; then
         apt-get install -y -qq golang-go >/dev/null 2>&1 || apt-get install -y -qq golang >/dev/null 2>&1 || true
@@ -92,24 +124,17 @@ install_golang() {
         apk add --no-cache go >/dev/null 2>&1 || true
     fi
 
-    if command -v go &>/dev/null; then
-        echo -e "${GREEN} [✓] Golang installed via package manager: $(go version 2>/dev/null | awk '{print $3}')${NC}"
+    if is_go_version_valid; then
+        echo -e "${GREEN} [✓] Golang (>= 1.22) installed via package manager: $(go version 2>/dev/null | awk '{print $3}')${NC}"
         return 0
-    fi
-
-    # Strategy 2: Snap Package Manager (if available)
-    if command -v snap &>/dev/null; then
-        echo -e "${CYAN} [*] Trying Snap package manager...${NC}"
-        snap install go --classic >/dev/null 2>&1 || true
-        export PATH="/snap/bin:$PATH"
+    else
         if command -v go &>/dev/null; then
-            echo -e "${GREEN} [✓] Golang installed via Snap: $(go version 2>/dev/null | awk '{print $3}')${NC}"
-            return 0
+            echo -e "${YELLOW} [!] Package manager Go version ($(go version 2>/dev/null | awk '{print $3}')) is outdated (< 1.22). Upgrading to official release...${NC}"
         fi
     fi
 
     # Strategy 3: Official Binary Tarball with Dynamic Version Detection
-    echo -e "${CYAN} [*] Trying official Go binary distribution...${NC}"
+    echo -e "${CYAN} [*] Installing official modern Go binary distribution...${NC}"
     LATEST_GO_VER=""
     if command -v curl &>/dev/null; then
         LATEST_GO_VER=$(curl -sSL --connect-timeout 5 "https://go.dev/VERSION?m=text" 2>/dev/null | head -n 1 || true)
@@ -118,7 +143,7 @@ install_golang() {
     fi
 
     if [[ -z "$LATEST_GO_VER" || ! "$LATEST_GO_VER" =~ ^go[0-9] ]]; then
-        LATEST_GO_VER="go1.23.0"
+        LATEST_GO_VER="go1.27.1"
     fi
 
     GO_TAR="${LATEST_GO_VER}.linux-${GO_ARCH}.tar.gz"
@@ -148,32 +173,27 @@ install_golang() {
         rm -rf /usr/local/go
         tar -C /usr/local -xzf "/tmp/${GO_TAR}" >/dev/null 2>&1 || true
         rm -f "/tmp/${GO_TAR}"
-        export PATH="/usr/local/go/bin:$PATH"
-        echo 'export PATH="/usr/local/go/bin:$PATH"' > /etc/profile.d/golang.sh 2>/dev/null || true
+        export PATH="/usr/local/go/bin:/snap/bin:$PATH"
+        echo 'export PATH="/usr/local/go/bin:/snap/bin:$PATH"' > /etc/profile.d/golang.sh 2>/dev/null || true
         chmod +x /etc/profile.d/golang.sh 2>/dev/null || true
     fi
 
-    if command -v go &>/dev/null || [ -f "/usr/local/go/bin/go" ]; then
-        export PATH="/usr/local/go/bin:$PATH"
-        echo -e "${GREEN} [✓] Golang installed successfully: $(go version 2>/dev/null | awk '{print $3}' || echo ${LATEST_GO_VER})${NC}"
+    if is_go_version_valid || [ -f "/usr/local/go/bin/go" ]; then
+        export PATH="/usr/local/go/bin:/snap/bin:$PATH"
+        echo -e "${GREEN} [✓] Modern Golang installed successfully: $(go version 2>/dev/null | awk '{print $3}' || echo ${LATEST_GO_VER})${NC}"
         return 0
     else
-        echo -e "${RED} [!] Failed to install Golang. Please install Go manually: https://go.dev/dl/${NC}"
+        echo -e "${RED} [!] Failed to install Go >= 1.22. Please install Go manually: https://go.dev/dl/${NC}"
         exit 1
     fi
 }
 
 export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 
-if ! command -v go &>/dev/null; then
+if ! is_go_version_valid; then
     install_golang
 else
-    CURRENT_GO_VER=$(go version 2>/dev/null | awk '{print $3}' | sed 's/go//' || echo "")
-    if [[ -z "$CURRENT_GO_VER" ]]; then
-        install_golang
-    else
-        echo -e "${GREEN} [✓] Go compiler found: version ${CURRENT_GO_VER}${NC}"
-    fi
+    echo -e "${GREEN} [✓] Valid Go compiler found (>= 1.22): $(go version 2>/dev/null | awk '{print $3}')${NC}"
 fi
 
 export PATH="/usr/local/go/bin:/snap/bin:$PATH"
