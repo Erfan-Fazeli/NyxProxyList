@@ -401,12 +401,12 @@ function renderInitialSkeleton() {
               id="target-url-input" 
               type="text" 
               placeholder="https://example.com or http://..." 
-              class="w-full bg-well border border-line text-zinc-100 placeholder-steel-500 text-[11px] rounded-xl pl-7 pr-2 py-2 focus:outline-none focus:border-mint-400/80 mono transition shadow-inner truncate"
+              class="w-full h-9 bg-well border border-line text-zinc-100 placeholder-steel-500 text-[11px] rounded-xl pl-7 pr-2 focus:outline-none focus:border-mint-400/80 mono transition shadow-inner truncate"
             />
           </div>
           <!-- Proxy Count Limit Input (0 = Infinite / All) -->
-          <div class="flex items-center bg-well border border-line rounded-xl px-2.5 py-1.5 focus-within:border-mint-400/80 transition shadow-inner shrink-0" title="Proxy Limit (0 = All)">
-            <label for="target-limit-input" class="text-[10px] text-steel-400 font-mono font-medium select-none flex items-center gap-1 cursor-pointer">
+          <div class="h-9 flex items-center bg-well border border-line rounded-xl px-2.5 focus-within:border-mint-400/80 transition shadow-inner shrink-0" title="Proxy Limit (0 = All)">
+            <label for="target-limit-input" class="text-[11px] text-steel-400 font-mono font-medium select-none flex items-center gap-1 cursor-pointer">
               <i class="fa-solid fa-list-ol text-[10px] text-steel-500"></i>
               <span>Limit:</span>
             </label>
@@ -416,14 +416,14 @@ function renderInitialSkeleton() {
               min="0" 
               value="0" 
               placeholder="0" 
-              class="w-10 bg-transparent text-zinc-100 font-mono text-xs font-bold text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ml-1"
+              class="w-10 bg-transparent text-zinc-100 font-mono text-[11px] font-bold text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ml-1"
             />
           </div>
-          <button id="btn-test-url" type="button" class="bg-mint-500 hover:bg-mint-400 text-navy-900 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 active:scale-95 transition shadow-[0_0_15px_rgba(0,245,155,0.25)] shrink-0">
+          <button id="btn-test-url" type="button" class="h-9 bg-mint-500 hover:bg-mint-400 text-navy-900 font-bold px-3.5 rounded-xl text-xs flex items-center gap-1.5 active:scale-95 transition shadow-[0_0_15px_rgba(0,245,155,0.25)] shrink-0">
             <i class="fa-solid fa-play text-[9px]"></i>
             <span id="txt-btn-test">Test URL</span>
           </button>
-          <button id="btn-clear-url-test" type="button" class="hidden bg-navy-800 hover:bg-navy-700 text-steel-400 hover:text-white border border-line p-2 rounded-xl text-xs active:scale-95 transition shrink-0" title="Clear test filter">
+          <button id="btn-clear-url-test" type="button" class="hidden h-9 bg-navy-800 hover:bg-navy-700 text-steel-400 hover:text-white border border-line px-2.5 rounded-xl text-xs active:scale-95 transition shrink-0" title="Clear test filter">
             <i class="fa-solid fa-xmark text-xs"></i>
           </button>
         </div>

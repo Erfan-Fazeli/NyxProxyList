@@ -98,7 +98,7 @@ const miniAppHTML = `<!DOCTYPE html>
 </head>
 <body class="bg-well text-zinc-100 min-h-screen select-none">
   <div id="app" class="max-w-md mx-auto p-4 pb-20"></div>
-  <script type="application/javascript" src="/app.js?v=16.0"></script>
+  <script type="application/javascript" src="/app.js?v=17.0"></script>
 </body>
 </html>`
 
