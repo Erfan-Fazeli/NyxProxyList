@@ -1,9 +1,13 @@
 const tg = window.Telegram?.WebApp;
 if (tg) {
-  tg.ready();
-  tg.expand();
-  if (tg.setHeaderColor) tg.setHeaderColor('#080a0f');
-  if (tg.setBackgroundColor) tg.setBackgroundColor('#080a0f');
+  try {
+    tg.ready();
+    tg.expand();
+    if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1')) {
+      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#080a0f');
+      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#080a0f');
+    }
+  } catch (e) {}
 }
 
 if ('serviceWorker' in navigator) {

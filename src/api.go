@@ -32,6 +32,12 @@ const miniAppHTML = `<!DOCTYPE html>
   <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -78,8 +84,6 @@ const miniAppHTML = `<!DOCTYPE html>
       }
     };
   </script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: oklch(0.13 0.012 265);
@@ -98,7 +102,7 @@ const miniAppHTML = `<!DOCTYPE html>
 </head>
 <body class="bg-well text-zinc-100 min-h-screen select-none">
   <div id="app" class="max-w-md mx-auto p-4 pb-20"></div>
-  <script type="application/javascript" src="/app.js?v=17.0"></script>
+  <script type="application/javascript" src="/app.js?v=18.0"></script>
 </body>
 </html>`
 
