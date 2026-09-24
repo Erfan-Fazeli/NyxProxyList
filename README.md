@@ -169,7 +169,7 @@ You can mix and match these filters in any request:
 ## 💻 Web Interface
 
 NyxProxy comes with a built-in web dashboard:
-- **Live Numbers:** See total alive proxies, country counts, and countdown to the next update.
+- **Interactive Protocol & Location Filters:** Instant switches for HTTP, SOCKS4, SOCKS5, country flags, and city dropdowns.
 - **Search & Filters:** Instantly search by IP, country, city, or protocol.
 - **Custom URL Tester:** Test if proxies can connect to your specific website directly from the browser.
 - **Copy & Download:** Copy all proxies with one click or download them as a `.txt` file.
