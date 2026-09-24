@@ -173,7 +173,8 @@ cat <<EOF > "$INSTALL_DIR/data/config.json"
   "port": "${SERVER_PORT}",
   "domain": "${SERVER_DOMAIN}",
   "email": "${SERVER_EMAIL}",
-  "auto_ssl": ${AUTO_SSL}
+  "auto_ssl": ${AUTO_SSL},
+  "update_proxylist_interval_hours": 1
 }
 EOF
 

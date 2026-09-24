@@ -3,5 +3,5 @@
   "domain": "",
   "email": "",
   "auto_ssl": false,
-  "harvest_interval_hours": 1
+  "update_proxylist_interval_hours": 1
 }

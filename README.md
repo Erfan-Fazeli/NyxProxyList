@@ -66,7 +66,7 @@ Settings can be defined in `data/config.json`, via environment variables, or CLI
   "domain": "",
   "email": "",
   "auto_ssl": false,
-  "harvest_interval_hours": 1
+  "update_proxylist_interval_hours": 1
 }
 ```
 
@@ -76,7 +76,7 @@ Settings can be defined in `data/config.json`, via environment variables, or CLI
 | **Port** | `--port` | `NYX_PORT` | `8080` | HTTP port to bind |
 | **Domain** | `--domain` | `NYX_DOMAIN` | `""` | Domain for Auto-SSL (Port 443 + 80) |
 | **Email** | `--email` | `NYX_EMAIL` | `""` | Let's Encrypt notification email |
-| **Interval** | `--interval` | `NYX_INTERVAL_HOURS` | `1` | Sync frequency in hours (N hours) |
+| **Update Interval** | `--interval` | `NYX_INTERVAL_HOURS` | `1` | Proxy update interval in hours (N hours) |
 
 ---
 

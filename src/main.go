@@ -15,18 +15,18 @@ import (
 )
 
 type ServerConfig struct {
-	Port                 string `json:"port"`
-	Domain               string `json:"domain"`
-	Email                string `json:"email"`
-	AutoSSL              bool   `json:"auto_ssl"`
-	HarvestIntervalHours int    `json:"harvest_interval_hours"`
+	Port                         string `json:"port"`
+	Domain                       string `json:"domain"`
+	Email                        string `json:"email"`
+	AutoSSL                      bool   `json:"auto_ssl"`
+	UpdateProxylistIntervalHours int    `json:"update_proxylist_interval_hours"`
 }
 
 var (
 	portFlag     = flag.String("port", "", "Web server port (default: 8080 or config.json)")
 	domainFlag   = flag.String("domain", "", "Custom domain name for Auto-SSL / HTTPS (e.g. proxy.example.com)")
 	emailFlag    = flag.String("email", "", "Admin email address for Let's Encrypt notifications")
-	intervalFlag = flag.Int("interval", 0, "Proxy harvesting interval in hours (default: 1 or config.json)")
+	intervalFlag = flag.Int("interval", 0, "Update proxylist interval in hours (default: 1 or config.json)")
 )
 
 const configFile = "data/config.json"
@@ -37,19 +37,19 @@ func init() {
 
 func loadServerConfig() ServerConfig {
 	cfg := ServerConfig{
-		Port:                 "8080",
-		Domain:               "",
-		Email:                "",
-		AutoSSL:              false,
-		HarvestIntervalHours: 1,
+		Port:                         "8080",
+		Domain:                       "",
+		Email:                        "",
+		AutoSSL:                      false,
+		UpdateProxylistIntervalHours: 1,
 	}
 
 	if data, err := os.ReadFile(configFile); err == nil {
 		_ = json.Unmarshal(data, &cfg)
 	}
 
-	if cfg.HarvestIntervalHours <= 0 {
-		cfg.HarvestIntervalHours = 1
+	if cfg.UpdateProxylistIntervalHours <= 0 {
+		cfg.UpdateProxylistIntervalHours = 1
 	}
 
 	// Environment variable overrides
@@ -66,7 +66,7 @@ func loadServerConfig() ServerConfig {
 	}
 	if envInt := os.Getenv("NYX_INTERVAL_HOURS"); envInt != "" {
 		if val, err := time.ParseDuration(envInt + "h"); err == nil && val > 0 {
-			cfg.HarvestIntervalHours = int(val.Hours())
+			cfg.UpdateProxylistIntervalHours = int(val.Hours())
 		}
 	}
 
@@ -81,7 +81,7 @@ func loadServerConfig() ServerConfig {
 		cfg.Email = *emailFlag
 	}
 	if *intervalFlag > 0 {
-		cfg.HarvestIntervalHours = *intervalFlag
+		cfg.UpdateProxylistIntervalHours = *intervalFlag
 	}
 
 	cfg.Domain = strings.TrimSpace(cfg.Domain)
@@ -150,8 +150,8 @@ func main() {
 	now := time.Now()
 	statusMu.Lock()
 	statusData.LastHarvestTime = now
-	statusData.NextHarvestTime = now.Add(time.Duration(cfg.HarvestIntervalHours) * time.Hour)
-	statusData.HarvestIntervalMins = cfg.HarvestIntervalHours * 60
+	statusData.NextHarvestTime = now.Add(time.Duration(cfg.UpdateProxylistIntervalHours) * time.Hour)
+	statusData.HarvestIntervalMins = cfg.UpdateProxylistIntervalHours * 60
 	statusData.ActivePoolCount = len(pool.proxies)
 	statusMu.Unlock()
 
@@ -177,7 +177,7 @@ func main() {
 		color.HiGreen("  [SOURCES] Loaded %d dynamic target sources from %s", len(initialSources), sourceFile)
 
 		go runPoolHealthKeeper()
-		go runPeriodicHarvester(cfg.HarvestIntervalHours)
+		go runPeriodicHarvester(cfg.UpdateProxylistIntervalHours)
 	}()
 
 	startWebServer(cfg.Port, cfg.Domain, cfg.Email)

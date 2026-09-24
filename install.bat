@@ -33,7 +33,7 @@ if %errorlevel% neq 0 (
 
 if not exist data mkdir data
 if not exist data\config.json (
-    echo { "port": "8080", "domain": "", "email": "", "auto_ssl": false } > data\config.json
+    echo { "port": "8080", "domain": "", "email": "", "auto_ssl": false, "update_proxylist_interval_hours": 1 } > data\config.json
 )
 
 echo [✓] Build successful! Starting NyxProxy Grid Engine...
