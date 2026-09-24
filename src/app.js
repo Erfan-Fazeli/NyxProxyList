@@ -249,7 +249,7 @@ function renderInitialSkeleton() {
           </div>
           <div class="flex flex-col">
             <div class="flex items-center gap-1.5">
-              <h1 class="text-sm font-bold tracking-tight text-white uppercase tracking-wider group-hover:text-mint-400 transition-colors duration-200">NYX ProxyList Tools</h1>
+              <h1 class="text-sm font-bold tracking-tight text-white uppercase tracking-wider group-hover:text-mint-400 transition-colors duration-200">NyxProxy Tools</h1>
               <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-steel-500 opacity-0 group-hover:opacity-100 group-hover:text-mint-400 -translate-x-1 group-hover:translate-x-0 transition-all duration-200"></i>
             </div>
             <p class="text-[11px] text-steel-400 mt-0.5 group-hover:text-steel-300 transition-colors duration-200">Auto Proxy Scraper and RealTime Health Checker</p>
