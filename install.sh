@@ -62,16 +62,16 @@ echo -e "${CYAN} [*] Checking and installing system packages...${NC}"
 
 if command -v apt-get &>/dev/null; then
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update -qq
-    apt-get install -y -qq curl wget git tar ufw build-essential ca-certificates >/dev/null 2>&1
+    apt-get update -qq || true
+    apt-get install -y -qq curl wget git tar ca-certificates >/dev/null 2>&1 || true
 elif command -v dnf &>/dev/null; then
-    dnf install -y -q curl wget git tar gcc ca-certificates >/dev/null 2>&1
+    dnf install -y -q curl wget git tar gcc ca-certificates >/dev/null 2>&1 || true
 elif command -v yum &>/dev/null; then
-    yum install -y -q curl wget git tar gcc ca-certificates >/dev/null 2>&1
+    yum install -y -q curl wget git tar gcc ca-certificates >/dev/null 2>&1 || true
 elif command -v pacman &>/dev/null; then
-    pacman -Sy --noconfirm curl wget git tar base-devel ca-certificates >/dev/null 2>&1
+    pacman -Sy --noconfirm curl wget git tar base-devel ca-certificates >/dev/null 2>&1 || true
 elif command -v apk &>/dev/null; then
-    apk add --no-cache curl wget git tar build-base ca-certificates bash >/dev/null 2>&1
+    apk add --no-cache curl wget git tar build-base ca-certificates bash >/dev/null 2>&1 || true
 fi
 
 # --- Golang Verification & Auto-Installer ---
@@ -80,9 +80,38 @@ install_golang() {
     GO_LATEST_VERSION="1.23.1"
     GO_TAR="go${GO_LATEST_VERSION}.linux-${GO_ARCH}.tar.gz"
     
-    wget -q --show-progress "https://go.dev/dl/${GO_TAR}" -O "/tmp/${GO_TAR}"
+    DOWNLOAD_SUCCESS=false
+    URLS=(
+        "https://dl.google.com/go/${GO_TAR}"
+        "https://go.dev/dl/${GO_TAR}"
+        "https://golang.google.cn/dl/${GO_TAR}"
+    )
+
+    for DL_URL in "${URLS[@]}"; do
+        echo -e "${CYAN} [*] Fetching ${DL_URL}...${NC}"
+        if command -v curl &>/dev/null; then
+            if curl -fSL --connect-timeout 15 "$DL_URL" -o "/tmp/${GO_TAR}"; then
+                DOWNLOAD_SUCCESS=true
+                break
+            fi
+        elif command -v wget &>/dev/null; then
+            if wget -q --timeout=15 "$DL_URL" -O "/tmp/${GO_TAR}"; then
+                DOWNLOAD_SUCCESS=true
+                break
+            fi
+        fi
+    done
+
+    if [ "$DOWNLOAD_SUCCESS" = false ]; then
+        echo -e "${RED} [!] Failed to download Golang archive. Please verify internet connectivity.${NC}"
+        exit 1
+    fi
+
     rm -rf /usr/local/go
-    tar -C /usr/local -xzf "/tmp/${GO_TAR}"
+    tar -C /usr/local -xzf "/tmp/${GO_TAR}" || {
+        echo -e "${RED} [!] Failed to extract Golang archive.${NC}"
+        exit 1
+    }
     rm -f "/tmp/${GO_TAR}"
     
     export PATH="/usr/local/go/bin:$PATH"
@@ -94,13 +123,35 @@ install_golang() {
 if ! command -v go &>/dev/null; then
     install_golang
 else
-    CURRENT_GO_VER=$(go version | awk '{print $3}' | sed 's/go//')
-    echo -e "${GREEN} [✓] Go compiler found: version ${CURRENT_GO_VER}${NC}"
+    CURRENT_GO_VER=$(go version 2>/dev/null | awk '{print $3}' | sed 's/go//' || echo "")
+    if [[ -z "$CURRENT_GO_VER" ]]; then
+        install_golang
+    else
+        echo -e "${GREEN} [✓] Go compiler found: version ${CURRENT_GO_VER}${NC}"
+    fi
 fi
 
 export PATH="/usr/local/go/bin:$PATH"
 
 # --- Interactive Configuration Step ---
+prompt_read() {
+    local prompt_msg="$1"
+    local var_name="$2"
+    local default_val="$3"
+    local input_val=""
+    if [ -t 0 ]; then
+        read -r -p "$prompt_msg" input_val || true
+    elif [ -c /dev/tty ] && read -r -p "$prompt_msg" input_val < /dev/tty 2>/dev/null; then
+        :
+    else
+        input_val=""
+    fi
+    if [ -z "$input_val" ]; then
+        input_val="$default_val"
+    fi
+    eval "$var_name=\"\$input_val\""
+}
+
 echo ""
 echo -e "${WHITE}─────────────────────────────────────────────────────────────────────────────${NC}"
 echo -e "${MINT} ⚙️  DEPLOYMENT CONFIGURATION SETUP${NC}"
@@ -111,10 +162,10 @@ echo -e "   ${CYAN}2)${NC} ${WHITE}Domain Mode${NC}      (HTTPS with Automatic L
 echo ""
 
 DEPLOY_MODE=""
-while [[ "$DEPLOY_MODE" != "1" && "$DEPLOY_MODE" != "2" ]]; do
-    read -r -p " Enter choice [1 or 2] (Default: 1): " DEPLOY_MODE < /dev/tty || DEPLOY_MODE="1"
-    DEPLOY_MODE="${DEPLOY_MODE:-1}"
-done
+prompt_read " Enter choice [1 or 2] (Default: 1): " DEPLOY_MODE "1"
+if [[ "$DEPLOY_MODE" != "1" && "$DEPLOY_MODE" != "2" ]]; then
+    DEPLOY_MODE="1"
+fi
 
 SERVER_PORT="8080"
 SERVER_DOMAIN=""
@@ -124,19 +175,25 @@ AUTO_SSL=false
 if [[ "$DEPLOY_MODE" == "2" ]]; then
     echo ""
     echo -e "${CYAN} 🌐 Enter your fully qualified domain name (pointed to this server's IP):${NC}"
-    while [[ -z "$SERVER_DOMAIN" ]]; do
-        read -r -p " Domain Name (e.g. proxy.example.com): " SERVER_DOMAIN < /dev/tty
-        SERVER_DOMAIN=$(echo "$SERVER_DOMAIN" | sed -e 's|^https://||' -e 's|^http://||' -e 's|/$||' | tr -d ' ')
-    done
+    prompt_read " Domain Name (e.g. proxy.example.com): " SERVER_DOMAIN ""
+    SERVER_DOMAIN=$(echo "$SERVER_DOMAIN" | sed -e 's|^https://||' -e 's|^http://||' -e 's|/$||' | tr -d ' ')
 
-    echo -e "${CYAN} ✉️  Enter email address for Let's Encrypt certificate renewal (Optional):${NC}"
-    read -r -p " Admin Email (e.g. admin@example.com): " SERVER_EMAIL < /dev/tty
-    SERVER_EMAIL=$(echo "$SERVER_EMAIL" | tr -d ' ')
-    AUTO_SSL=true
-    SERVER_PORT="443"
+    if [[ -z "$SERVER_DOMAIN" ]]; then
+        echo -e "${YELLOW} [!] No domain entered. Falling back to IP Address mode (Port 8080)...${NC}"
+        DEPLOY_MODE="1"
+        SERVER_PORT="8080"
+        AUTO_SSL=false
+    else
+        echo -e "${CYAN} ✉️  Enter email address for Let's Encrypt certificate renewal (Optional):${NC}"
+        prompt_read " Admin Email (e.g. admin@example.com): " SERVER_EMAIL ""
+        SERVER_EMAIL=$(echo "$SERVER_EMAIL" | tr -d ' ')
+        AUTO_SSL=true
+        SERVER_PORT="443"
+    fi
 else
     echo ""
-    read -r -p " Enter HTTP port to bind [Default: 8080]: " INPUT_PORT < /dev/tty || INPUT_PORT="8080"
+    INPUT_PORT=""
+    prompt_read " Enter HTTP port to bind [Default: 8080]: " INPUT_PORT "8080"
     SERVER_PORT="${INPUT_PORT:-8080}"
 fi
 
