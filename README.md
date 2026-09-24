@@ -16,15 +16,17 @@
 
 ## 💡 Why NyxProxy?
 
-Most proxy scrapers are **reactive**: they only search and test proxies when you manually run them. That means every time your application needs proxies, you have to launch a script, wait several minutes for thousands of dead IPs to be filtered, and hope the remaining ones don't drop offline right away.
+### ❌ The Problem with Traditional Scrapers
+Most proxy tools work **on-demand**: every time you need proxies for your bot, scraper, or project, you have to run a script and wait several minutes while it downloads raw lists and tests thousands of dead IPs. By the time the scan finishes, many of those proxies have already gone offline.
 
-**NyxProxy is proactive and always ready:**
+### ✅ The NyxProxy Way: Always Ready & Pre-Tested
+NyxProxy changes this completely by doing all the heavy lifting in the background:
 
-Instead of scraping on demand, NyxProxy runs continuously as a background service:
-- **Automatic Re-Harvesting:** Periodically fetches fresh proxies from **100+ public sources** every **N hours** (customizable in your config).
-- **Live Health Monitoring:** Constantly tests protocol support (HTTP, SOCKS4, SOCKS5), response speed, and anonymity headers.
-- **Instant Auto-Pruning:** Unstable or dead proxies are removed from memory immediately so the pool stays clean.
-- **Zero-Wait Access:** A verified list of working proxies is always ready in memory. Your scripts and bots can fetch live proxies in milliseconds via the **REST API** or **Web Dashboard** without waiting for scans.
+- **Always Running in the Background:** Operates silently as a server service, so you never have to launch manual scans again.
+- **Continuous Auto-Harvesting:** Automatically pulls fresh proxies from **100+ public sources** every **N hours** (customizable in config).
+- **Real-Time Health Checking:** Constantly verifies connectivity, speed, protocols (HTTP, SOCKS4, SOCKS5), privacy level (Elite, Anonymous), and blacklist reputation.
+- **Instant Auto-Pruning:** Unhealthy or dead proxies are removed from the active list immediately.
+- **Zero Wait Time:** When your code needs proxies, they are already tested and waiting in memory. Fetch them in milliseconds via the **REST API** or **Web Dashboard** with zero scanning delay.
 
 ---
 
