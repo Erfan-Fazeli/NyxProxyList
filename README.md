@@ -1,4 +1,4 @@
-# 🌐 NyxProxy
+# 🌐 Nyx ProxyList Tools
 
 <div align="center">
 
@@ -9,7 +9,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-7c3aed?style=for-the-badge&logo=linux&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-2563eb?style=for-the-badge&logo=open-source-initiative&logoColor=white)
 
-**A minimal and fast proxy list tool for automated scraping, real-time health checking, and instant API access.**
+**A minimal and fast proxy list tool for automated scraping, real-time health checking, and instant API & WebApp access.**
 
 [Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Configuration](#%EF%B8%8F-configuration) • [API Guide](#-rest-api) • [Web Interface](#-web-interface)
 
