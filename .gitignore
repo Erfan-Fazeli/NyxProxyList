@@ -1,0 +1,25 @@
+# Binaries
+nyxProxy
+nyxProxy.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Let's Encrypt / TLS certs cache
+data/certs/
+*.pem
+*.key
+*.crt
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Build artifacts
+/build/
+/dist/
