@@ -74,12 +74,54 @@ elif command -v apk &>/dev/null; then
     apk add --no-cache curl wget git tar build-base ca-certificates bash >/dev/null 2>&1 || true
 fi
 
-# --- Golang Verification & Auto-Installer ---
+# --- Golang Verification & Multi-Strategy Auto-Installer ---
 install_golang() {
-    echo -e "${YELLOW} [*] Downloading and installing official Golang distribution...${NC}"
-    GO_LATEST_VERSION="1.23.1"
-    GO_TAR="go${GO_LATEST_VERSION}.linux-${GO_ARCH}.tar.gz"
-    
+    echo -e "${YELLOW} [*] Resolving and installing Golang compiler...${NC}"
+
+    # Strategy 1: System Package Manager (Apt / Dnf / Yum / Pacman / Apk)
+    echo -e "${CYAN} [*] Trying system package manager...${NC}"
+    if command -v apt-get &>/dev/null; then
+        apt-get install -y -qq golang-go >/dev/null 2>&1 || apt-get install -y -qq golang >/dev/null 2>&1 || true
+    elif command -v dnf &>/dev/null; then
+        dnf install -y -q golang >/dev/null 2>&1 || true
+    elif command -v yum &>/dev/null; then
+        yum install -y -q golang >/dev/null 2>&1 || true
+    elif command -v pacman &>/dev/null; then
+        pacman -Sy --noconfirm go >/dev/null 2>&1 || true
+    elif command -v apk &>/dev/null; then
+        apk add --no-cache go >/dev/null 2>&1 || true
+    fi
+
+    if command -v go &>/dev/null; then
+        echo -e "${GREEN} [✓] Golang installed via package manager: $(go version 2>/dev/null | awk '{print $3}')${NC}"
+        return 0
+    fi
+
+    # Strategy 2: Snap Package Manager (if available)
+    if command -v snap &>/dev/null; then
+        echo -e "${CYAN} [*] Trying Snap package manager...${NC}"
+        snap install go --classic >/dev/null 2>&1 || true
+        export PATH="/snap/bin:$PATH"
+        if command -v go &>/dev/null; then
+            echo -e "${GREEN} [✓] Golang installed via Snap: $(go version 2>/dev/null | awk '{print $3}')${NC}"
+            return 0
+        fi
+    fi
+
+    # Strategy 3: Official Binary Tarball with Dynamic Version Detection
+    echo -e "${CYAN} [*] Trying official Go binary distribution...${NC}"
+    LATEST_GO_VER=""
+    if command -v curl &>/dev/null; then
+        LATEST_GO_VER=$(curl -sSL --connect-timeout 5 "https://go.dev/VERSION?m=text" 2>/dev/null | head -n 1 || true)
+    elif command -v wget &>/dev/null; then
+        LATEST_GO_VER=$(wget -qO- --timeout=5 "https://go.dev/VERSION?m=text" 2>/dev/null | head -n 1 || true)
+    fi
+
+    if [[ -z "$LATEST_GO_VER" || ! "$LATEST_GO_VER" =~ ^go[0-9] ]]; then
+        LATEST_GO_VER="go1.23.0"
+    fi
+
+    GO_TAR="${LATEST_GO_VER}.linux-${GO_ARCH}.tar.gz"
     DOWNLOAD_SUCCESS=false
     URLS=(
         "https://dl.google.com/go/${GO_TAR}"
@@ -88,7 +130,7 @@ install_golang() {
     )
 
     for DL_URL in "${URLS[@]}"; do
-        echo -e "${CYAN} [*] Fetching ${DL_URL}...${NC}"
+        echo -e "${CYAN} [*] Downloading ${DL_URL}...${NC}"
         if command -v curl &>/dev/null; then
             if curl -fSL --connect-timeout 15 "$DL_URL" -o "/tmp/${GO_TAR}"; then
                 DOWNLOAD_SUCCESS=true
@@ -102,23 +144,26 @@ install_golang() {
         fi
     done
 
-    if [ "$DOWNLOAD_SUCCESS" = false ]; then
-        echo -e "${RED} [!] Failed to download Golang archive. Please verify internet connectivity.${NC}"
-        exit 1
+    if [ "$DOWNLOAD_SUCCESS" = true ]; then
+        rm -rf /usr/local/go
+        tar -C /usr/local -xzf "/tmp/${GO_TAR}" >/dev/null 2>&1 || true
+        rm -f "/tmp/${GO_TAR}"
+        export PATH="/usr/local/go/bin:$PATH"
+        echo 'export PATH="/usr/local/go/bin:$PATH"' > /etc/profile.d/golang.sh 2>/dev/null || true
+        chmod +x /etc/profile.d/golang.sh 2>/dev/null || true
     fi
 
-    rm -rf /usr/local/go
-    tar -C /usr/local -xzf "/tmp/${GO_TAR}" || {
-        echo -e "${RED} [!] Failed to extract Golang archive.${NC}"
+    if command -v go &>/dev/null || [ -f "/usr/local/go/bin/go" ]; then
+        export PATH="/usr/local/go/bin:$PATH"
+        echo -e "${GREEN} [✓] Golang installed successfully: $(go version 2>/dev/null | awk '{print $3}' || echo ${LATEST_GO_VER})${NC}"
+        return 0
+    else
+        echo -e "${RED} [!] Failed to install Golang. Please install Go manually: https://go.dev/dl/${NC}"
         exit 1
-    }
-    rm -f "/tmp/${GO_TAR}"
-    
-    export PATH="/usr/local/go/bin:$PATH"
-    echo 'export PATH="/usr/local/go/bin:$PATH"' > /etc/profile.d/golang.sh
-    chmod +x /etc/profile.d/golang.sh
-    echo -e "${GREEN} [✓] Golang ${GO_LATEST_VERSION} installed successfully!${NC}"
+    fi
 }
+
+export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 
 if ! command -v go &>/dev/null; then
     install_golang
@@ -131,7 +176,7 @@ else
     fi
 fi
 
-export PATH="/usr/local/go/bin:$PATH"
+export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 
 # --- Interactive Configuration Step ---
 prompt_read() {
