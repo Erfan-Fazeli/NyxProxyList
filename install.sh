@@ -243,7 +243,7 @@ SERVER_PUBLIC_IP="$(curl -s --max-time 3 https://api.ipify.org || curl -s --max-
 # --- Final Output Banner ---
 echo ""
 echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-echo -e "   ${MINT}🎉 NYX PROXY ENGINE DEPLOYED & RUNNING SUCCESSFULLY!${NC}"
+echo -e "   ${MINT}🎉 NYX PROXY LIST Tools DEPLOYED & RUNNING SUCCESSFULLY!${NC}"
 echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
 
 if [[ "$AUTO_SSL" == "true" ]]; then
