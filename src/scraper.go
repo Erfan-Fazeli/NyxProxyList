@@ -164,7 +164,7 @@ func ensureAndLoadSources() []string {
 
 func runPoolHealthKeeper() {
 	for {
-		time.Sleep(5 * time.Minute)
+		time.Sleep(10 * time.Minute)
 
 		pool.mu.RLock()
 		snapshot := make([]*ProxyItem, 0, len(pool.proxies))
@@ -178,7 +178,7 @@ func runPoolHealthKeeper() {
 		}
 
 		var wg sync.WaitGroup
-		sem := make(chan struct{}, 200)
+		sem := make(chan struct{}, 250)
 
 		for _, item := range snapshot {
 			wg.Add(1)
@@ -191,11 +191,11 @@ func runPoolHealthKeeper() {
 				var err error
 				switch p.Protocol {
 				case "http":
-					client, err = getHTTPClient(p.Address, 3*time.Second)
+					client, err = getHTTPClient(p.Address, 5*time.Second)
 				case "socks4":
-					client, err = getSOCKS4Client(p.Address, 3*time.Second)
+					client, err = getSOCKS4Client(p.Address, 5*time.Second)
 				default:
-					client, err = getSOCKS5Client(p.Address, 3*time.Second)
+					client, err = getSOCKS5Client(p.Address, 5*time.Second)
 				}
 
 				key := fmt.Sprintf("%s://%s", p.Protocol, p.Address)
@@ -207,13 +207,15 @@ func runPoolHealthKeeper() {
 						p.FailStrikes = 0
 						p.Latency = lat
 						p.LastChecked = time.Now()
-						if cc != "" && cc != "UNKNOWN" {
+						if cc != "" && cc != "UNKNOWN" && len(cc) == 2 {
 							p.Country = cc
 						}
-						if city != "" {
+						if city != "" && city != "Unknown" {
 							p.City = city
 						}
-						p.Anonymity = anon
+						if anon != "" {
+							p.Anonymity = anon
+						}
 						p.ThreatScore = tScore
 						p.Tier = tier
 						p.HTTPS = https
@@ -222,7 +224,7 @@ func runPoolHealthKeeper() {
 					}
 				}
 
-				if p.FailStrikes >= 2 {
+				if p.FailStrikes >= 3 {
 					pool.Remove(key)
 				}
 			}(item)
@@ -326,7 +328,7 @@ func runPeriodicHarvester(intervalHours int) {
 		statusMu.Unlock()
 
 		var testWg sync.WaitGroup
-		sem := make(chan struct{}, 300)
+		sem := make(chan struct{}, 400)
 		var testedCounter int64
 
 		for addr := range candidates {
@@ -345,7 +347,7 @@ func runPeriodicHarvester(intervalHours int) {
 				}()
 
 				// 1. Test SOCKS5 first
-				if sc, err := getSOCKS5Client(a, 3500*time.Millisecond); err == nil {
+				if sc, err := getSOCKS5Client(a, 4000*time.Millisecond); err == nil {
 					if cc, city, anon, tScore, tier, lat, https, ok := testProxyLive(sc, a); ok {
 						pool.AddOrUpdate(&ProxyItem{
 							Address:     a,
@@ -364,7 +366,7 @@ func runPeriodicHarvester(intervalHours int) {
 				}
 
 				// 2. Test HTTP
-				if hc, err := getHTTPClient(a, 3500*time.Millisecond); err == nil {
+				if hc, err := getHTTPClient(a, 4000*time.Millisecond); err == nil {
 					if cc, city, anon, tScore, tier, lat, https, ok := testProxyLive(hc, a); ok {
 						pool.AddOrUpdate(&ProxyItem{
 							Address:     a,
@@ -383,7 +385,7 @@ func runPeriodicHarvester(intervalHours int) {
 				}
 
 				// 3. Test SOCKS4
-				if s4, err := getSOCKS4Client(a, 3500*time.Millisecond); err == nil {
+				if s4, err := getSOCKS4Client(a, 4000*time.Millisecond); err == nil {
 					if cc, city, anon, tScore, tier, lat, https, ok := testProxyLive(s4, a); ok {
 						pool.AddOrUpdate(&ProxyItem{
 							Address:     a,

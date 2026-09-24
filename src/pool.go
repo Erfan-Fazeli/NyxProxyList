@@ -132,12 +132,18 @@ func (p *ProxyPool) LoadFromFile() {
 			if ip == nil || ip.IsPrivate() || ip.IsLoopback() || ip.IsUnspecified() || isCloudflareOrCDN(host) {
 				continue
 			}
-			// Exclude fake Iron/unknown items, transparent proxies, or unverified country
-			if it.Country == "UNKNOWN" || it.Country == "" || len(it.Country) != 2 || it.Anonymity == "Transparent" {
+			// Exclude transparent proxies
+			if it.Anonymity == "Transparent" {
 				continue
 			}
-			if it.Country == "US" && it.City == "New York" && strings.HasSuffix(it.Address, ":80") {
-				continue
+			if it.Country == "" || it.Country == "UNKNOWN" || len(it.Country) != 2 {
+				it.Country = "US"
+				if it.City == "" {
+					it.City = "Unknown"
+				}
+			}
+			if it.Tier == "" {
+				it.Tier = "Bronze"
 			}
 			if seenAddrs[it.Address] {
 				continue

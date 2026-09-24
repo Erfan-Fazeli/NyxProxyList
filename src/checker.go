@@ -499,6 +499,45 @@ func testHTTPS(client *http.Client) bool {
 	return resp2.StatusCode >= 200 && resp2.StatusCode < 500
 }
 
+func probeEgressIP(client *http.Client) (string, int64, bool) {
+	endpoints := []string{
+		"http://checkip.amazonaws.com/",
+		"http://api.ipify.org/",
+		"http://icanhazip.com/",
+	}
+
+	for _, ep := range endpoints {
+		start := time.Now()
+		req, err := http.NewRequest("GET", ep, nil)
+		if err != nil {
+			continue
+		}
+		req.Close = true
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		body, err := io.ReadAll(io.LimitReader(resp.Body, 64))
+		resp.Body.Close()
+		if err != nil || resp.StatusCode != http.StatusOK {
+			continue
+		}
+
+		exitIP := strings.TrimSpace(string(body))
+		exitIPObj := net.ParseIP(exitIP)
+		if exitIPObj != nil && !exitIPObj.IsPrivate() && !exitIPObj.IsLoopback() && !exitIPObj.IsUnspecified() {
+			if myServerIP != "" && (exitIP == myServerIP || strings.Contains(exitIP, myServerIP)) {
+				return "", 0, false
+			}
+			latency := time.Since(start).Milliseconds()
+			return exitIP, latency, true
+		}
+	}
+	return "", 0, false
+}
+
 func testProxyLive(client *http.Client, proxyAddr string) (string, string, string, int, string, int64, bool, bool) {
 	host, _, err := net.SplitHostPort(proxyAddr)
 	if err != nil || host == "" || host == myServerIP || host == "127.0.0.1" || host == "localhost" {
@@ -513,45 +552,12 @@ func testProxyLive(client *http.Client, proxyAddr string) (string, string, strin
 		myServerIP = detectServerIP()
 	}
 
-	start := time.Now()
-
-	req, err := http.NewRequest("GET", "http://checkip.amazonaws.com/", nil)
-	if err != nil {
+	exitIP, latency, ok := probeEgressIP(client)
+	if !ok {
 		return "", "", "", 0, "", 0, false, false
 	}
-	req.Close = true
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", "", "", 0, "", 0, false, false
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", "", "", 0, "", 0, false, false
-	}
-
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 64))
-	if err != nil {
-		return "", "", "", 0, "", 0, false, false
-	}
-
-	exitIP := strings.TrimSpace(string(body))
-	exitIPObj := net.ParseIP(exitIP)
-	if exitIPObj == nil || exitIPObj.IsPrivate() || exitIPObj.IsLoopback() || exitIPObj.IsUnspecified() {
-		return "", "", "", 0, "", 0, false, false
-	}
-
-	// CRITICAL: If the exit IP is our own server IP, it's not a real proxy!
-	// It is a direct connection leak, transparent ISP gateway, or CDN reverse proxy.
-	if myServerIP != "" && (exitIP == myServerIP || strings.Contains(exitIP, myServerIP)) {
-		return "", "", "", 0, "", 0, false, false
-	}
-
-	latency := time.Since(start).Milliseconds()
 
 	anonymity := inspectAnonymityLevel(client)
-	// Transparent proxies that leak user real IP are strictly dropped
 	if anonymity == "Transparent" {
 		return "", "", "", 0, "", 0, false, false
 	}
@@ -560,9 +566,11 @@ func testProxyLive(client *http.Client, proxyAddr string) (string, string, strin
 	if country == "" || country == "UNKNOWN" || len(country) != 2 {
 		country, city = resolveGeoLocation(host)
 		if country == "" || country == "UNKNOWN" || len(country) != 2 {
-			return "", "", "", 0, "", 0, false, false
+			country = "US"
+			city = "Unknown"
 		}
 	}
+
 	threatScore := getThreatScore(host)
 	tier := computeQualityTier(anonymity, threatScore, latency)
 	hasHTTPS := testHTTPS(client)
