@@ -170,7 +170,7 @@ You can mix and match these filters in any request:
 
 NyxProxy comes with a built-in web dashboard:
 - **Interactive Protocol & Location Filters:** Instant switches for HTTP, SOCKS4, SOCKS5, country flags, and city dropdowns.
-- **Search & Filters:** Instantly search by IP, country, city, or protocol.
+- **Built-in API Documentation:** Integrated documentation tab with ready-to-use examples and quick copy buttons.
 - **Custom URL Tester:** Test if proxies can connect to your specific website directly from the browser.
 - **Copy & Download:** Copy all proxies with one click or download them as a `.txt` file.
 - **Mobile Friendly:** Works smoothly on mobile browsers, as an installable app (PWA), or inside Telegram.
