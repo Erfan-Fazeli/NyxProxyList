@@ -232,7 +232,10 @@ func runPoolHealthKeeper() {
 	}
 }
 
-func runHourlyHarvester() {
+func runPeriodicHarvester(intervalHours int) {
+	if intervalHours <= 0 {
+		intervalHours = 1
+	}
 	for {
 		sources := ensureAndLoadSources()
 
@@ -407,12 +410,13 @@ func runHourlyHarvester() {
 		statusData.State = "IDLE"
 		statusData.CurrentTask = "Decentralized Grid Online"
 		statusData.LastHarvestTime = time.Now()
-		statusData.NextHarvestTime = time.Now().Add(60 * time.Minute)
-		statusData.HarvestIntervalMins = 60
+		sleepDuration := time.Duration(intervalHours) * time.Hour
+		statusData.NextHarvestTime = time.Now().Add(sleepDuration)
+		statusData.HarvestIntervalMins = intervalHours * 60
 		statusData.ActivePoolCount = len(pool.proxies)
 		statusMu.Unlock()
 
 		color.HiGreen("  [HARVEST] Sync complete. Active pool size: %d verified proxies", len(pool.proxies))
-		time.Sleep(60 * time.Minute)
+		time.Sleep(sleepDuration)
 	}
 }

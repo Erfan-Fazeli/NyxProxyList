@@ -1,70 +1,5 @@
 [
   {
-    "address": "5.129.254.154:8888",
-    "protocol": "http",
-    "country": "RU",
-    "city": "Moscow",
-    "anonymity": "Elite",
-    "threat_score": 0,
-    "tier": "Gold",
-    "latency": 2028,
-    "last_checked": "2026-09-24T13:36:49.30007889-04:00",
-    "fail_strikes": 1,
-    "https": false
-  },
-  {
-    "address": "8.138.131.110:9098",
-    "protocol": "http",
-    "country": "CN",
-    "city": "Guangzhou",
-    "anonymity": "Anonymous",
-    "threat_score": 0,
-    "tier": "Silver",
-    "latency": 4710,
-    "last_checked": "2026-09-24T13:38:45.473677057-04:00",
-    "fail_strikes": 1,
-    "https": false
-  },
-  {
-    "address": "54.253.167.61:1145",
-    "protocol": "http",
-    "country": "AU",
-    "city": "Sydney",
-    "anonymity": "Anonymous",
-    "threat_score": 0,
-    "tier": "Silver",
-    "latency": 3830,
-    "last_checked": "2026-09-24T13:39:56.442120425-04:00",
-    "fail_strikes": 1,
-    "https": false
-  },
-  {
-    "address": "54.67.110.244:17094",
-    "protocol": "http",
-    "country": "US",
-    "city": "San Jose",
-    "anonymity": "Anonymous",
-    "threat_score": 0,
-    "tier": "Silver",
-    "latency": 3880,
-    "last_checked": "2026-09-24T13:41:29.125410329-04:00",
-    "fail_strikes": 0,
-    "https": false
-  },
-  {
-    "address": "47.106.75.125:8181",
-    "protocol": "http",
-    "country": "CN",
-    "city": "Shenzhen",
-    "anonymity": "Elite",
-    "threat_score": 0,
-    "tier": "Gold",
-    "latency": 4857,
-    "last_checked": "2026-09-24T13:40:06.674388003-04:00",
-    "fail_strikes": 1,
-    "https": false
-  },
-  {
     "address": "18.188.53.175:50000",
     "protocol": "socks5",
     "country": "US",
@@ -91,6 +26,19 @@
     "https": false
   },
   {
+    "address": "18.191.250.90:12481",
+    "protocol": "socks4",
+    "country": "US",
+    "city": "Columbus",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 3519,
+    "last_checked": "2026-09-24T13:42:59.795138275-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
     "address": "47.91.29.151:4145",
     "protocol": "http",
     "country": "JP",
@@ -101,6 +49,19 @@
     "latency": 5400,
     "last_checked": "2026-09-24T13:39:38.844525063-04:00",
     "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "79.110.202.131:8081",
+    "protocol": "http",
+    "country": "PL",
+    "city": "Wroclaw",
+    "anonymity": "Elite",
+    "threat_score": 0,
+    "tier": "Diamond",
+    "latency": 548,
+    "last_checked": "2026-09-24T13:43:07.427844347-04:00",
+    "fail_strikes": 0,
     "https": false
   },
   {
@@ -130,6 +91,45 @@
     "https": false
   },
   {
+    "address": "144.124.251.24:10104",
+    "protocol": "http",
+    "country": "GB",
+    "city": "Aberystwyth",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 2602,
+    "last_checked": "2026-09-24T13:42:45.731230396-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "54.238.38.227:3128",
+    "protocol": "http",
+    "country": "JP",
+    "city": "Tokyo",
+    "anonymity": "Anonymous",
+    "threat_score": 1,
+    "tier": "Bronze",
+    "latency": 3780,
+    "last_checked": "2026-09-24T13:43:52.220738054-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "39.102.208.236:8080",
+    "protocol": "http",
+    "country": "CN",
+    "city": "Beijing",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 4088,
+    "last_checked": "2026-09-24T13:41:43.74503569-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
     "address": "8.213.197.208:8443",
     "protocol": "http",
     "country": "TH",
@@ -140,6 +140,19 @@
     "latency": 5117,
     "last_checked": "2026-09-24T13:39:52.23275569-04:00",
     "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "216.105.143.146:4145",
+    "protocol": "socks5",
+    "country": "US",
+    "city": "Simpsonville",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 4590,
+    "last_checked": "2026-09-24T13:41:58.122378971-04:00",
+    "fail_strikes": 0,
     "https": false
   },
   {
@@ -179,6 +192,58 @@
     "latency": 2018,
     "last_checked": "2026-09-24T13:40:21.05518073-04:00",
     "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "15.160.116.45:39597",
+    "protocol": "socks5",
+    "country": "IT",
+    "city": "Milan",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 2144,
+    "last_checked": "2026-09-24T13:43:03.892041118-04:00",
+    "fail_strikes": 0,
+    "https": true
+  },
+  {
+    "address": "45.74.31.47:5351",
+    "protocol": "socks5",
+    "country": "BG",
+    "city": "Sofia",
+    "anonymity": "Anonymous",
+    "threat_score": 1,
+    "tier": "Bronze",
+    "latency": 4017,
+    "last_checked": "2026-09-24T13:43:20.290981171-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "45.74.31.42:4599",
+    "protocol": "socks5",
+    "country": "US",
+    "city": "Sulphur Springs",
+    "anonymity": "Anonymous",
+    "threat_score": 1,
+    "tier": "Bronze",
+    "latency": 4843,
+    "last_checked": "2026-09-24T13:43:09.636076854-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "157.90.10.50:108",
+    "protocol": "http",
+    "country": "DE",
+    "city": "Falkenstein",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 5243,
+    "last_checked": "2026-09-24T13:43:36.021953561-04:00",
+    "fail_strikes": 0,
     "https": false
   },
   {
@@ -299,6 +364,19 @@
     "https": false
   },
   {
+    "address": "47.91.115.179:8080",
+    "protocol": "http",
+    "country": "AE",
+    "city": "Dubai",
+    "anonymity": "Anonymous",
+    "threat_score": 1,
+    "tier": "Bronze",
+    "latency": 4105,
+    "last_checked": "2026-09-24T13:44:20.674413047-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
     "address": "39.102.208.189:8008",
     "protocol": "http",
     "country": "CN",
@@ -338,6 +416,19 @@
     "https": false
   },
   {
+    "address": "13.246.6.135:9002",
+    "protocol": "socks5",
+    "country": "ZA",
+    "city": "Cape Town",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 3613,
+    "last_checked": "2026-09-24T13:42:16.595209111-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
     "address": "184.178.172.3:4145",
     "protocol": "socks5",
     "country": "US",
@@ -347,6 +438,97 @@
     "tier": "Bronze",
     "latency": 3227,
     "last_checked": "2026-09-24T13:40:45.228538111-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "5.129.254.154:8888",
+    "protocol": "http",
+    "country": "RU",
+    "city": "Moscow",
+    "anonymity": "Elite",
+    "threat_score": 0,
+    "tier": "Gold",
+    "latency": 2028,
+    "last_checked": "2026-09-24T13:36:49.30007889-04:00",
+    "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "8.138.131.110:9098",
+    "protocol": "http",
+    "country": "CN",
+    "city": "Guangzhou",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 4710,
+    "last_checked": "2026-09-24T13:38:45.473677057-04:00",
+    "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "54.253.167.61:1145",
+    "protocol": "http",
+    "country": "AU",
+    "city": "Sydney",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 3830,
+    "last_checked": "2026-09-24T13:39:56.442120425-04:00",
+    "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "54.67.110.244:17094",
+    "protocol": "http",
+    "country": "US",
+    "city": "San Jose",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 3880,
+    "last_checked": "2026-09-24T13:41:29.125410329-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "16.26.143.154:56172",
+    "protocol": "socks5",
+    "country": "AU",
+    "city": "Melbourne",
+    "anonymity": "Anonymous",
+    "threat_score": 0,
+    "tier": "Silver",
+    "latency": 2821,
+    "last_checked": "2026-09-24T13:43:18.704085178-04:00",
+    "fail_strikes": 0,
+    "https": false
+  },
+  {
+    "address": "47.106.75.125:8181",
+    "protocol": "http",
+    "country": "CN",
+    "city": "Shenzhen",
+    "anonymity": "Elite",
+    "threat_score": 0,
+    "tier": "Gold",
+    "latency": 4857,
+    "last_checked": "2026-09-24T13:40:06.674388003-04:00",
+    "fail_strikes": 1,
+    "https": false
+  },
+  {
+    "address": "47.91.110.148:8008",
+    "protocol": "http",
+    "country": "AE",
+    "city": "Dubai",
+    "anonymity": "Anonymous",
+    "threat_score": 1,
+    "tier": "Bronze",
+    "latency": 4672,
+    "last_checked": "2026-09-24T13:41:39.84500047-04:00",
     "fail_strikes": 0,
     "https": false
   }
