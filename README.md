@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-blueviolet?style=flat-square)
 
-**A simple, self-hosted proxy scraper and live health checker with a built-in REST API and web dashboard.**
+**A minimal and fast proxy list tool for automated scraping, real-time health checking, and instant API access.**
 
 [Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Configuration](#%EF%B8%8F-configuration) • [API Guide](#-rest-api) • [Web Interface](#-web-interface)
 
