@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ⚡ NYX PROXY — AUTOMATED SCRAPER & HEALTH CHECKER PRODUCTION INSTALLER
+#  ⚡ NYX PROXY LIST TOOLS — AUTOMATED SCRAPER & HEALTH CHECKER INSTALLER
 #  Repository: https://github.com/Erfan-Fazeli/NyxProxyList
 #  Author: Erfan Fazeli (NyxAgent.dev Developer Studio)
 # ==============================================================================
@@ -15,7 +15,7 @@ CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 WHITE='\033[1;37m'
 GRAY='\033[0;90m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # --- Brand Banner ---
 print_banner() {
@@ -29,7 +29,7 @@ print_banner() {
     echo "  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   "
     echo -e "${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.1  •  AUTOMATED SCRAPER & HEALTH CHECKER INSTALLER ${NC}"
+    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.1  •  AUTOMATED SCRAPER & HEALTH CHECKER${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}\n"
 }
 
@@ -37,7 +37,7 @@ print_banner
 
 # --- Root Privileges Verification ---
 if [[ $EUID -ne 0 ]]; then
-    echo -e "${YELLOW} [!] This script requires root privileges. Attempting sudo...${NC}"
+    echo -e "   ${YELLOW}⚠ Root privileges required. Escalating with sudo...${NC}"
     exec sudo -E bash "$0" "$@"
 fi
 
@@ -55,10 +55,10 @@ case "$ARCH" in
     *)             GO_ARCH="amd64" ;;
 esac
 
-echo -e "${CYAN} [*] System Architecture detected: ${WHITE}${ARCH} (${GO_ARCH})${NC}"
+echo -e "   ${CYAN}•${NC} System Architecture : ${WHITE}${ARCH} (${GO_ARCH})${NC}"
 
 # --- Install System Prerequisites ---
-echo -e "${CYAN} [*] Checking and installing system packages...${NC}"
+echo -e "   ${CYAN}•${NC} Checking system packages..."
 
 if command -v apt-get &>/dev/null; then
     export DEBIAN_FRONTEND=noninteractive
@@ -97,21 +97,19 @@ is_go_version_valid() {
 }
 
 install_golang() {
-    echo -e "${YELLOW} [*] Resolving and installing modern Golang compiler (>= 1.22)...${NC}"
+    echo -e "   ${YELLOW}•${NC} Installing modern Golang compiler (>= 1.22)..."
 
-    # Strategy 1: Snap Package Manager (if available, usually modern >= 1.22)
+    # Strategy 1: Snap Package Manager
     if command -v snap &>/dev/null; then
-        echo -e "${CYAN} [*] Trying Snap package manager...${NC}"
         snap install go --classic >/dev/null 2>&1 || true
         export PATH="/snap/bin:$PATH"
         if is_go_version_valid; then
-            echo -e "${GREEN} [✓] Modern Golang installed via Snap: $(go version | awk '{print $3}')${NC}"
+            echo -e "   ${GREEN}✓${NC} Golang installed via Snap: ${WHITE}$(go version | awk '{print $3}')${NC}"
             return 0
         fi
     fi
 
-    # Strategy 2: System Package Manager (Apt / Dnf / Yum / Pacman / Apk)
-    echo -e "${CYAN} [*] Trying system package manager...${NC}"
+    # Strategy 2: System Package Manager
     if command -v apt-get &>/dev/null; then
         apt-get install -y -qq golang-go >/dev/null 2>&1 || apt-get install -y -qq golang >/dev/null 2>&1 || true
     elif command -v dnf &>/dev/null; then
@@ -125,16 +123,12 @@ install_golang() {
     fi
 
     if is_go_version_valid; then
-        echo -e "${GREEN} [✓] Golang (>= 1.22) installed via package manager: $(go version 2>/dev/null | awk '{print $3}')${NC}"
+        echo -e "   ${GREEN}✓${NC} Golang installed via Package Manager: ${WHITE}$(go version 2>/dev/null | awk '{print $3}')${NC}"
         return 0
-    else
-        if command -v go &>/dev/null; then
-            echo -e "${YELLOW} [!] Package manager Go version ($(go version 2>/dev/null | awk '{print $3}')) is outdated (< 1.22). Upgrading to official release...${NC}"
-        fi
     fi
 
-    # Strategy 3: Official Binary Tarball with Dynamic Version Detection
-    echo -e "${CYAN} [*] Installing official modern Go binary distribution...${NC}"
+    # Strategy 3: Official Binary Tarball
+    echo -e "   ${CYAN}•${NC} Fetching official Go binary distribution..."
     LATEST_GO_VER=""
     if command -v curl &>/dev/null; then
         LATEST_GO_VER=$(curl -sSL --connect-timeout 5 "https://go.dev/VERSION?m=text" 2>/dev/null | head -n 1 || true)
@@ -143,7 +137,7 @@ install_golang() {
     fi
 
     if [[ -z "$LATEST_GO_VER" || ! "$LATEST_GO_VER" =~ ^go[0-9] ]]; then
-        LATEST_GO_VER="go1.27.1"
+        LATEST_GO_VER="go1.23.1"
     fi
 
     GO_TAR="${LATEST_GO_VER}.linux-${GO_ARCH}.tar.gz"
@@ -155,14 +149,13 @@ install_golang() {
     )
 
     for DL_URL in "${URLS[@]}"; do
-        echo -e "${CYAN} [*] Downloading ${DL_URL}...${NC}"
         if command -v curl &>/dev/null; then
-            if curl -fSL --connect-timeout 15 "$DL_URL" -o "/tmp/${GO_TAR}"; then
+            if curl -fSL --connect-timeout 15 "$DL_URL" -o "/tmp/${GO_TAR}" >/dev/null 2>&1; then
                 DOWNLOAD_SUCCESS=true
                 break
             fi
         elif command -v wget &>/dev/null; then
-            if wget -q --timeout=15 "$DL_URL" -O "/tmp/${GO_TAR}"; then
+            if wget -q --timeout=15 "$DL_URL" -O "/tmp/${GO_TAR}" >/dev/null 2>&1; then
                 DOWNLOAD_SUCCESS=true
                 break
             fi
@@ -180,10 +173,10 @@ install_golang() {
 
     if is_go_version_valid || [ -f "/usr/local/go/bin/go" ]; then
         export PATH="/usr/local/go/bin:/snap/bin:$PATH"
-        echo -e "${GREEN} [✓] Modern Golang installed successfully: $(go version 2>/dev/null | awk '{print $3}' || echo ${LATEST_GO_VER})${NC}"
+        echo -e "   ${GREEN}✓${NC} Golang installed: ${WHITE}$(go version 2>/dev/null | awk '{print $3}' || echo ${LATEST_GO_VER})${NC}"
         return 0
     else
-        echo -e "${RED} [!] Failed to install Go >= 1.22. Please install Go manually: https://go.dev/dl/${NC}"
+        echo -e "   ${RED}✗ Failed to install Go >= 1.22. Please install Go manually.${NC}"
         exit 1
     fi
 }
@@ -193,41 +186,49 @@ export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 if ! is_go_version_valid; then
     install_golang
 else
-    echo -e "${GREEN} [✓] Valid Go compiler found (>= 1.22): $(go version 2>/dev/null | awk '{print $3}')${NC}"
+    echo -e "   ${GREEN}✓${NC} Golang compiler verified: ${WHITE}$(go version 2>/dev/null | awk '{print $3}')${NC}"
 fi
 
 export PATH="/usr/local/go/bin:/snap/bin:$PATH"
 
-# --- Interactive Configuration Step ---
-prompt_read() {
-    local prompt_msg="$1"
-    local var_name="$2"
-    local default_val="$3"
-    local input_val=""
-    if [ -t 0 ]; then
-        read -r -p "$prompt_msg" input_val || true
-    elif [ -c /dev/tty ] && read -r -p "$prompt_msg" input_val < /dev/tty 2>/dev/null; then
-        :
+# --- Inline Interactive Prompt Helper ---
+prompt_input() {
+    local label="$1"
+    local default_val="$2"
+    local result=""
+
+    if [[ -n "$default_val" ]]; then
+        printf "   ${WHITE}▶${NC} %s ${GRAY}[${default_val}]${NC}: ${MINT}" "$label" > /dev/tty 2>/dev/null || printf "   ${WHITE}▶${NC} %s ${GRAY}[${default_val}]${NC}: ${MINT}" "$label"
     else
-        input_val=""
+        printf "   ${WHITE}▶${NC} %s: ${MINT}" "$label" > /dev/tty 2>/dev/null || printf "   ${WHITE}▶${NC} %s: ${MINT}" "$label"
     fi
-    if [ -z "$input_val" ]; then
-        input_val="$default_val"
+
+    if [ -t 0 ]; then
+        read -r result || true
+    elif [ -r /dev/tty ]; then
+        read -r result < /dev/tty || true
+    else
+        result=""
     fi
-    eval "$var_name=\"\$input_val\""
+    printf "${NC}" > /dev/tty 2>/dev/null || printf "${NC}"
+
+    result="$(echo "${result}" | tr -d '\r\n')"
+    if [[ -z "$result" ]]; then
+        result="$default_val"
+    fi
+    echo "$result"
 }
 
+# --- Deployment Configuration Setup ---
 echo ""
-echo -e "${WHITE}─────────────────────────────────────────────────────────────────────────────${NC}"
-echo -e "${MINT} ⚙️  DEPLOYMENT CONFIGURATION SETUP${NC}"
-echo -e "${WHITE}─────────────────────────────────────────────────────────────────────────────${NC}"
-echo -e " Select your preferred deployment mode:"
-echo -e "   ${CYAN}1)${NC} ${WHITE}IP Address Mode${NC}  (Standard HTTP on custom port, e.g. :8080 or :80)"
-echo -e "   ${CYAN}2)${NC} ${WHITE}Domain Mode${NC}      (HTTPS with Automatic Let's Encrypt SSL & HTTP-01)"
+echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
+echo -e "   ${MINT}⚙️  DEPLOYMENT CONFIGURATION SETUP${NC}"
+echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
+echo -e "   ${CYAN}1)${NC} ${WHITE}IP Address Mode${NC}  ${GRAY}— Standard HTTP on custom port (e.g. :8080)${NC}"
+echo -e "   ${CYAN}2)${NC} ${WHITE}Domain Mode${NC}      ${GRAY}— HTTPS with Automatic Let's Encrypt SSL (Port 443)${NC}"
 echo ""
 
-DEPLOY_MODE=""
-prompt_read " Enter choice [1 or 2] (Default: 1): " DEPLOY_MODE "1"
+DEPLOY_MODE="$(prompt_input "Select deployment mode (1 or 2)" "1")"
 if [[ "$DEPLOY_MODE" != "1" && "$DEPLOY_MODE" != "2" ]]; then
     DEPLOY_MODE="1"
 fi
@@ -239,57 +240,52 @@ AUTO_SSL=false
 
 if [[ "$DEPLOY_MODE" == "2" ]]; then
     echo ""
-    echo -e "${CYAN} 🌐 Enter your fully qualified domain name (pointed to this server's IP):${NC}"
-    prompt_read " Domain Name (e.g. proxy.example.com): " SERVER_DOMAIN ""
+    SERVER_DOMAIN="$(prompt_input "Enter domain pointed to this server (e.g. proxy.mysite.com)" "")"
     SERVER_DOMAIN=$(echo "$SERVER_DOMAIN" | sed -e 's|^https://||' -e 's|^http://||' -e 's|/$||' | tr -d ' ')
 
     if [[ -z "$SERVER_DOMAIN" ]]; then
-        echo -e "${YELLOW} [!] No domain entered. Falling back to IP Address mode (Port 8080)...${NC}"
+        echo -e "   ${YELLOW}⚠ No domain provided. Defaulting to IP Address Mode on port 8080...${NC}"
         DEPLOY_MODE="1"
         SERVER_PORT="8080"
         AUTO_SSL=false
     else
-        echo -e "${CYAN} ✉️  Enter email address for Let's Encrypt certificate renewal (Optional):${NC}"
-        prompt_read " Admin Email (e.g. admin@example.com): " SERVER_EMAIL ""
+        SERVER_EMAIL="$(prompt_input "Enter admin email for SSL renewal (Optional)" "")"
         SERVER_EMAIL=$(echo "$SERVER_EMAIL" | tr -d ' ')
         AUTO_SSL=true
         SERVER_PORT="443"
     fi
 else
     echo ""
-    INPUT_PORT=""
-    prompt_read " Enter HTTP port to bind [Default: 8080]: " INPUT_PORT "8080"
-    SERVER_PORT="${INPUT_PORT:-8080}"
+    SERVER_PORT="$(prompt_input "Enter HTTP port to bind" "8080")"
+    SERVER_PORT="${SERVER_PORT:-8080}"
 fi
 
-echo -e "${GREEN} [✓] Configuration selected: Mode=${DEPLOY_MODE}, Domain='${SERVER_DOMAIN}', Port=${SERVER_PORT}${NC}"
+echo ""
+echo -e "   ${GREEN}✓${NC} Configuration set: Mode=${DEPLOY_MODE}, Domain='${SERVER_DOMAIN:-N/A}', Port=${SERVER_PORT}"
 
 # --- Setup Target Directory & Source Code ---
 echo ""
-echo -e "${CYAN} [*] Setting up workspace directory...${NC}"
+echo -e "   ${CYAN}•${NC} Setting up application files..."
 
-# Check if current directory is already the repository
 if [[ -f "src/main.go" && -f "src/api.go" ]]; then
     INSTALL_DIR="$(pwd)"
-    echo -e "${GREEN} [✓] Using current repository directory: ${INSTALL_DIR}${NC}"
+    echo -e "   ${GREEN}✓${NC} Using repository path: ${WHITE}${INSTALL_DIR}${NC}"
 else
     mkdir -p "$INSTALL_DIR"
     if [[ -d "$INSTALL_DIR/.git" ]]; then
-        echo -e "${CYAN} [*] Pulling latest updates from GitHub...${NC}"
+        echo -e "   ${CYAN}•${NC} Updating repository..."
         cd "$INSTALL_DIR"
         git pull origin main || git pull origin master || true
     else
-        echo -e "${CYAN} [*] Cloning NyxProxy repository to ${INSTALL_DIR}...${NC}"
+        echo -e "   ${CYAN}•${NC} Cloning repository..."
         git clone "$REPO_URL" "$INSTALL_DIR"
         cd "$INSTALL_DIR"
     fi
 fi
 
-# Ensure data directory exists
 mkdir -p "$INSTALL_DIR/data"
 mkdir -p "$INSTALL_DIR/data/certs"
 
-# Write config.json
 cat <<EOF > "$INSTALL_DIR/data/config.json"
 {
   "port": "${SERVER_PORT}",
@@ -300,21 +296,20 @@ cat <<EOF > "$INSTALL_DIR/data/config.json"
 }
 EOF
 
-# --- Compile Optimized Binary ---
-echo -e "${CYAN} [*] Building NyxProxy engine binary...${NC}"
+# --- Compile Binary ---
+echo -e "   ${CYAN}•${NC} Compiling NyxProxy high-performance binary..."
 cd "$INSTALL_DIR"
 go mod tidy
 go build -ldflags="-s -w" -o nyxProxy ./src
-
 chmod +x nyxProxy
-echo -e "${GREEN} [✓] Binary successfully compiled: ${INSTALL_DIR}/nyxProxy${NC}"
+echo -e "   ${GREEN}✓${NC} Binary compiled successfully: ${WHITE}${INSTALL_DIR}/nyxProxy${NC}"
 
 # --- Systemd Service Configuration ---
-echo -e "${CYAN} [*] Configuring Systemd Service (nyxproxy.service)...${NC}"
+echo -e "   ${CYAN}•${NC} Configuring systemd daemon service..."
 
 cat <<EOF > /etc/systemd/system/nyxproxy.service
 [Unit]
-Description=NyxProxy Automated Proxy Scraper & Health Checker
+Description=NyxProxy Automated Scraper & Health Checker
 After=network.target network-online.target
 Wants=network-online.target
 
@@ -339,7 +334,7 @@ systemctl restart nyxproxy
 
 # --- Firewall Adjustments ---
 if command -v ufw &>/dev/null && ufw status | grep -qw "active"; then
-    echo -e "${CYAN} [*] Updating UFW firewall rules...${NC}"
+    echo -e "   ${CYAN}•${NC} Updating UFW firewall rules..."
     if [[ "$AUTO_SSL" == "true" ]]; then
         ufw allow 80/tcp >/dev/null 2>&1 || true
         ufw allow 443/tcp >/dev/null 2>&1 || true
@@ -347,7 +342,7 @@ if command -v ufw &>/dev/null && ufw status | grep -qw "active"; then
         ufw allow "${SERVER_PORT}/tcp" >/dev/null 2>&1 || true
     fi
 elif command -v firewall-cmd &>/dev/null && systemctl is-active --quiet firewalld; then
-    echo -e "${CYAN} [*] Updating firewalld rules...${NC}"
+    echo -e "   ${CYAN}•${NC} Updating firewalld rules..."
     if [[ "$AUTO_SSL" == "true" ]]; then
         firewall-cmd --permanent --add-service=http --add-service=https >/dev/null 2>&1 || true
     else
@@ -357,7 +352,7 @@ elif command -v firewall-cmd &>/dev/null && systemctl is-active --quiet firewall
 fi
 
 # --- Health Probe ---
-echo -e "${CYAN} [*] Verifying service health status...${NC}"
+echo -e "   ${CYAN}•${NC} Verifying service status..."
 sleep 2
 
 SERVER_PUBLIC_IP="$(curl -s --max-time 3 https://api.ipify.org || curl -s --max-time 3 http://checkip.amazonaws.com || echo "YOUR_SERVER_IP")"
@@ -365,7 +360,7 @@ SERVER_PUBLIC_IP="$(curl -s --max-time 3 https://api.ipify.org || curl -s --max-
 # --- Final Output Banner ---
 echo ""
 echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-echo -e "   ${MINT}🎉 NYX PROXY LIST Tools DEPLOYED & RUNNING SUCCESSFULLY!${NC}"
+echo -e "   ${MINT}🎉 NYX PROXY LIST TOOLS DEPLOYED & RUNNING SUCCESSFULLY!${NC}"
 echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
 
 if [[ "$AUTO_SSL" == "true" ]]; then
