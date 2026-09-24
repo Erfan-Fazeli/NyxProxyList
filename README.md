@@ -2,9 +2,12 @@
 
 <div align="center">
 
-![Go Version](https://img.shields.io/badge/Go-%3E%3D1.22-00ADD8?style=flat-square&logo=go)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-blueviolet?style=flat-square)
+![Go Version](https://img.shields.io/badge/Go-%3E%3D1.22-00ADD8?style=flat-square&logo=go&logoColor=white)
+![Protocols](https://img.shields.io/badge/Protocols-HTTP%20%7C%20SOCKS4%20%7C%20SOCKS5-00f59b?style=flat-square)
+![SSL](https://img.shields.io/badge/SSL-Auto--TLS%20Ready-059669?style=flat-square&logo=letsencrypt&logoColor=white)
+![Telegram & PWA](https://img.shields.io/badge/App-PWA%20%26%20Telegram-229ED9?style=flat-square&logo=telegram&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-7c3aed?style=flat-square&logo=linux&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-2563eb?style=flat-square)
 
 **A minimal and fast proxy list tool for automated scraping, real-time health checking, and instant API access.**
 
