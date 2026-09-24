@@ -6,58 +6,81 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-blueviolet?style=flat-square)
 
-**Self-hosted autonomous proxy scraper and real-time health checker with REST API and web dashboard.**
+**A simple, self-hosted proxy scraper and live health checker with a built-in REST API and web dashboard.**
 
-[Quick Start](#-quick-start) • [Configuration](#%EF%B8%8F-configuration) • [REST API](#-rest-api) • [Web Dashboard](#-web-interface)
+[Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Configuration](#%EF%B8%8F-configuration) • [API Guide](#-rest-api) • [Web Interface](#-web-interface)
 
 </div>
 
 ---
 
-## 💡 Overview
+## 💡 Why NyxProxy?
 
-Traditional proxy tools only scrape when manually invoked, making you wait minutes for scans to finish before getting working endpoints.
+With traditional tools, you usually have to run a script and wait several minutes while it scrapes and tests proxies before you can use them. Most of those proxies often stop working shortly after.
 
-**NyxProxy runs continuously as an autonomous background service:**
-- **Automated Re-Harvesting:** Periodically pulls fresh proxies from **100+ public sources** every **N hours** (customizable in config).
-- **Continuous Health Checking:** Actively validates protocol connectivity (HTTP, SOCKS4, SOCKS5), true latency, anonymity headers, and blacklist reputation (IPsum).
-- **Auto-Pruning:** Dead or failing proxies are automatically removed from memory.
-- **Instant Availability:** An active pool of verified proxies is always hot in memory — accessible within milliseconds via the REST API or Web Dashboard.
+**NyxProxy makes this simple and automatic:**
+
+- It runs quietly in the background on your server.
+- It automatically gathers proxies from **100+ public sources** every **N hours** (you can easily choose the interval).
+- It constantly checks each proxy to make sure it is actually online and working (HTTP, SOCKS4, SOCKS5).
+- Broken or dead proxies are removed right away.
+- Whenever your app, bot, or script needs a proxy, you can grab fresh, working ones instantly from the **API** or the **web page** — with zero wait time.
 
 ---
 
 ## ⚡ Quick Start
 
-### 🐧 Linux (One-Line Installer)
+### 🐧 Linux (One-Line Setup)
+Run this single command in your Linux terminal:
+
 ```bash
 curl -sSL https://raw.githubusercontent.com/Erfan-Fazeli/NyxProxyList/main/install.sh | bash
 ```
-> Installs dependencies, compiles the binary, sets up a background `systemd` service (`nyxproxy.service`), and lets you configure IP or Domain mode with automatic Let's Encrypt SSL.
+> The script installs any missing tools, builds the program, and sets up a background service for you. You can choose to run it with a simple IP address or connect your domain for free automatic HTTPS.
+
+---
 
 ### 🪟 Windows Setup
-```cmd
-git clone https://github.com/Erfan-Fazeli/NyxProxyList.git
-cd NyxProxyList
-install.bat
-```
+1. Clone this repository:
+   ```cmd
+   git clone https://github.com/Erfan-Fazeli/NyxProxyList.git
+   cd NyxProxyList
+   ```
+2. Double-click `install.bat` (or run it in Command Prompt). It will build and start the app for you.
 
-### 🛠️ Manual Build (Any OS)
+---
+
+### 🛠️ Manual Build (Any System)
+If you already have [Go 1.22+](https://go.dev/dl/) installed:
+
 ```bash
+# 1. Clone the repo
 git clone https://github.com/Erfan-Fazeli/NyxProxyList.git
 cd NyxProxyList
 
+# 2. Build the app
 go mod tidy
 go build -ldflags="-s -w" -o nyxProxy ./src
 
-# Run with custom options
-./nyxProxy --port 8080 --interval 2
+# 3. Start running
+./nyxProxy --port 8080
 ```
+
+---
+
+## ⚙️ How It Works
+
+1. **Scrapes Sources:** Automatically downloads proxy lists from over 100 sources.
+2. **Tests Connectivity:** Checks if the proxy is alive, measures response speed (latency), and tests HTTP, SOCKS4, and SOCKS5 support.
+3. **Checks Privacy & Safety:** Checks anonymity levels (Elite, Anonymous, Transparent) and screens against threat blacklists.
+4. **Removes Dead Proxies:** Automatically drops proxies that stop responding so your list stays clean and healthy.
+5. **Ready to Use:** Serves live proxies instantly via the web UI and REST API.
 
 ---
 
 ## ⚙️ Configuration
 
-Settings can be defined in `data/config.json`, via environment variables, or CLI flags:
+You can easily change settings in `data/config.json`, through environment variables, or command-line flags.
 
 ### `data/config.json`
 ```json
@@ -70,80 +93,96 @@ Settings can be defined in `data/config.json`, via environment variables, or CLI
 }
 ```
 
-### CLI Flags & Environment Variables
-| Option | CLI Flag | Env Variable | Default | Description |
+### Settings Reference
+| Setting | CLI Flag | Env Variable | Default | What it does |
 | :--- | :--- | :--- | :--- | :--- |
-| **Port** | `--port` | `NYX_PORT` | `8080` | HTTP port to bind |
-| **Domain** | `--domain` | `NYX_DOMAIN` | `""` | Domain for Auto-SSL (Port 443 + 80) |
-| **Email** | `--email` | `NYX_EMAIL` | `""` | Let's Encrypt notification email |
-| **Update Interval** | `--interval` | `NYX_INTERVAL_HOURS` | `1` | Proxy update interval in hours (N hours) |
+| **Port** | `--port` | `NYX_PORT` | `8080` | Port for the web server and API |
+| **Domain** | `--domain` | `NYX_DOMAIN` | `""` | Domain name for automatic free SSL |
+| **Email** | `--email` | `NYX_EMAIL` | `""` | Email for SSL notifications (optional) |
+| **Update Interval** | `--interval` | `NYX_INTERVAL_HOURS` | `1` | How often to refresh sources (in hours) |
 
 ---
 
-## 🏆 Quality Tiers
+## 🏆 Quality Levels (Tiers)
 
-Every proxy is automatically classified:
+Every proxy is grouped into a simple quality level:
 
-| Tier | Anonymity | Blacklist Score | Latency | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **Diamond** | Elite (L1) | 0 | < 800ms | Fast, pristine IP reputation, no header leaks |
-| **Gold** | Elite (L1) | 0 | Any | Full origin IP concealment, clean reputation |
-| **Silver** | Anonymous (L2) | 0 | Any | Origin IP hidden, proxy signature detected |
-| **Bronze** | Anonymous (L2) | 1–2 | Any | Working proxy with minor threat flags |
-| **Iron** | Transparent | ≥ 3 | Any | Leaks client IP or heavily blacklisted |
+- **💎 Diamond:** Fastest speed (ping < 800ms), highest privacy (Elite), completely clean IP.
+- **🥇 Gold:** High privacy (Elite) and clean IP.
+- **🥈 Silver:** Good privacy (Anonymous) and clean IP.
+- **🥉 Bronze:** Working proxy with minor blacklist flags.
+- **⚙️ Iron:** Transparent proxy (reveals your real IP) or heavily blacklisted.
 
 ---
 
 ## 📡 REST API
 
-CORS-enabled endpoints with query parameter filtering:
+The API is free, fast, and supports CORS so you can use it directly in Python, JavaScript, cURL, or any other language.
 
-### Endpoints
-- `GET /api/v1/raw` — Plaintext list of `protocol://ip:port`
-- `GET /api/v1/proxies` — Detailed JSON array with GeoIP and latency
-- `GET /api/v1/test?url=...` — Live test pool proxies against a target URL (supports `stream=true`)
-- `GET /api/v1/stats` — Overall telemetry and breakdown
+### Main Endpoints
 
-### Example Requests
+#### 1. Plain Text List (`/api/v1/raw`)
+Returns a simple line-by-line list of `protocol://ip:port`. Great for scripts and command-line tools.
+
 ```bash
-# Plaintext: 20 Diamond SOCKS5 proxies from Germany
+# Get 20 Diamond SOCKS5 proxies from Germany
 curl "http://localhost:8080/api/v1/raw?type=socks5&country=DE&tier=Diamond&limit=20"
+```
 
-# JSON: 10 clean HTTP proxies
+#### 2. JSON List (`/api/v1/proxies`)
+Returns full details for each proxy (country, city, latency, privacy level, and safety score).
+
+```bash
+# Get 10 clean HTTP proxies in JSON format
 curl "http://localhost:8080/api/v1/proxies?type=http&clean_only=true&limit=10"
+```
 
-# Streamed probe against custom target URL
+#### 3. Live Target URL Tester (`/api/v1/test`)
+Tests proxies in real-time against any website you want to reach:
+
+```bash
 curl -N "http://localhost:8080/api/v1/test?url=https://httpbin.org/ip&stream=true"
 ```
 
-### Filter Parameters
-| Parameter | Values | Default | Description |
+#### 4. Live Statistics (`/api/v1/stats`)
+```bash
+curl "http://localhost:8080/api/v1/stats"
+```
+
+---
+
+### Easy Query Filters
+
+You can mix and match these filters in any request:
+
+| Parameter | Example Values | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `type` | `all`, `http`, `socks4`, `socks5`, `socks` | `all` | Protocol type |
-| `country` | 2-letter ISO code (e.g. `US`, `DE`) | `ALL` | Country filter |
-| `city` | City name (e.g. `Frankfurt`) | `ALL` | City filter |
-| `tier` | `Diamond`, `Gold`, `Silver`, `Bronze`, `Iron` | `ALL` | Quality rating |
-| `anonymity` | `Elite`, `Anonymous`, `Transparent` | `ALL` | Anonymity level |
-| `clean_only` | `true`, `false` | `false` | Filter out blacklisted IPs |
-| `https` | `true`, `false` | `false` | Must support HTTPS connect |
-| `max_latency`| Number in ms (e.g. `500`) | `0` | Latency cap |
-| `limit` | Number (`0` = all) | `0` | Result count limit |
-| `random` | `true`, `false` | `false` | Randomize output |
+| `type` | `http`, `socks4`, `socks5`, `socks`, `all` | `all` | Filter by proxy protocol |
+| `country` | `US`, `DE`, `FR`, `GB`, `ALL` | `ALL` | 2-letter country code |
+| `city` | `Frankfurt`, `London`, `ALL` | `ALL` | Filter by city name |
+| `tier` | `Diamond`, `Gold`, `Silver`, `Bronze` | `ALL` | Filter by quality level |
+| `clean_only` | `true`, `false` | `false` | Only return clean proxies with 0 threat score |
+| `https` | `true`, `false` | `false` | Only return proxies that support HTTPS |
+| `max_latency`| `500`, `1000` | `0` | Max response time in milliseconds |
+| `limit` | `10`, `50`, `100` (`0` = all) | `0` | How many proxies to return |
+| `random` | `true`, `false` | `false` | Randomize the order |
 
 ---
 
 ## 💻 Web Interface
 
-Built-in zero-dependency responsive UI:
-- **Live Counters:** Real-time telemetry, active pool count, and countdown to next harvest.
-- **Instant Search & Filter:** Client-side sorting and multi-criteria filters.
-- **Custom Target Prober:** Verify proxy reachability to specific URLs with visual progress.
-- **PWA & Telegram Ready:** Installable as a Progressive Web App or used directly inside Telegram WebApp.
+NyxProxy comes with a built-in web dashboard:
+- **Live Numbers:** See total alive proxies, country counts, and countdown to the next update.
+- **Search & Filters:** Instantly search by IP, country, city, or protocol.
+- **Custom URL Tester:** Test if proxies can connect to your specific website directly from the browser.
+- **Copy & Download:** Copy all proxies with one click or download them as a `.txt` file.
+- **Mobile Friendly:** Works smoothly on mobile browsers, as an installable app (PWA), or inside Telegram.
 
 ---
 
-## 📄 License & Credits
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE). Free to use for personal and commercial projects.
 
 - **Author:** [Erfan Fazeli](https://github.com/Erfan-Fazeli)
-- **Studio:** [NyxAgent.dev](https://NyxAgent.dev)
-- **License:** MIT License
+- **Developer Studio:** [NyxAgent.dev](https://NyxAgent.dev)
