@@ -29,7 +29,7 @@ print_banner() {
     echo "  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   "
     echo -e "${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.1  •  AUTOMATED SCRAPER & HEALTH CHECKER INSTALLER AND EASY DEPLOY${NC}"
+    echo -e "   ${MINT}⚡ NYX PROXY LIST TOOLS v1.1  •  AUTOMATED SCRAPER & HEALTH CHECKER INSTALLER ${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}\n"
 }
 
