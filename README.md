@@ -16,17 +16,12 @@
 
 ## 💡 Why NyxProxy?
 
-### ❌ The Problem with Traditional Scrapers
-Most proxy tools work **on-demand**: every time you need proxies for your bot, scraper, or project, you have to run a script and wait several minutes while it downloads raw lists and tests thousands of dead IPs. By the time the scan finishes, many of those proxies have already gone offline.
+Traditional scrapers only run when you manually start them, making you wait minutes for slow scans every time you need proxies.
 
-### ✅ The NyxProxy Way: Always Ready & Pre-Tested
-NyxProxy changes this completely by doing all the heavy lifting in the background:
-
-- **Always Running in the Background:** Operates silently as a server service, so you never have to launch manual scans again.
-- **Continuous Auto-Harvesting:** Automatically pulls fresh proxies from **100+ public sources** every **N hours** (customizable in config).
-- **Real-Time Health Checking:** Constantly verifies connectivity, speed, protocols (HTTP, SOCKS4, SOCKS5), privacy level (Elite, Anonymous), and blacklist reputation.
-- **Instant Auto-Pruning:** Unhealthy or dead proxies are removed from the active list immediately.
-- **Zero Wait Time:** When your code needs proxies, they are already tested and waiting in memory. Fetch them in milliseconds via the **REST API** or **Web Dashboard** with zero scanning delay.
+**NyxProxy works differently by running in the background:**
+- **Auto-Scrapes & Checks:** Gathers proxies from 100+ sources every N hours and continuously checks their health in real time.
+- **Auto-Removes Dead Proxies:** Drops broken proxies immediately so your list stays fresh and clean.
+- **Instant Access (Zero Wait Time):** Working proxies are always tested and waiting in memory — fetch them in milliseconds via the REST API or Web Dashboard.
 
 ---
 
