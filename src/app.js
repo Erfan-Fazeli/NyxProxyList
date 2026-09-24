@@ -293,7 +293,7 @@ function renderInitialSkeleton() {
               <span id="stat-total" class="text-sm font-extrabold text-mint-400 mono">0</span>
             </div>
             <div class="border-r border-line">
-              <span class="text-[8.5px] sm:text-[9.5px] text-cyan-400 block font-medium uppercase tracking-wider truncate"><i class="fa-solid fa-cloud-arrow-down mr-0.5 text-cyan-400"></i> ProxyList Source</span>
+              <span class="text-[8.5px] sm:text-[9.5px] text-cyan-400 block font-medium uppercase tracking-wider truncate"><i class="fa-solid fa-cloud-arrow-down mr-0.5 text-cyan-400"></i> Source</span>
               <span id="stat-sources" class="text-sm font-extrabold text-cyan-300 mono">0</span>
             </div>
             <div class="border-r border-line">
@@ -388,7 +388,7 @@ function renderInitialSkeleton() {
             <h2 class="text-xs font-bold uppercase tracking-wider text-white">Custom URL Checker</h2>
           </div>
           <div class="flex items-center gap-1.5 text-[10px] text-steel-400 font-mono tracking-wide">
-            <span>http:// or https://</span>
+            <span></span>
           </div>
         </div>
 
@@ -1214,7 +1214,7 @@ function attachPermanentEvents() {
     const limitVal = limitInput ? parseInt(limitInput.value) : 0;
     state.proxyLimit = (!isNaN(limitVal) && limitVal > 0) ? limitVal : 0;
 
-    // Ensure URL has http:// or https:// prefix
+    // Ensure URL has  prefix
     if (!rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
       rawUrl = 'https://' + rawUrl;
       if (input) input.value = rawUrl;
