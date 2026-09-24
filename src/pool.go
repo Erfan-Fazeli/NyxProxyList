@@ -65,7 +65,7 @@ var (
 	statusMu       sync.RWMutex
 	statusData     = SystemStatus{
 		State:               "IDLE",
-		CurrentTask:         "Dynamic Source Grid Active",
+		CurrentTask:         "Proxy Scraper & Health Checker Active",
 		HarvestIntervalMins: 60,
 	}
 	myServerIP string

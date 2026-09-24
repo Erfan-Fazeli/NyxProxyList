@@ -1,14 +1,14 @@
 @echo off
 REM ==============================================================================
-REM   ⚡ NYX PROXY GRID — WINDOWS ONE-CLICK INSTALLER & LAUNCHER
+REM   ⚡ NYX PROXY — WINDOWS SETUP & LAUNCHER
 REM   Repository: https://github.com/Erfan-Fazeli/NyxProxyList
 REM   Author: Erfan Fazeli (NyxAgent.dev Developer Studio)
 REM ==============================================================================
 
-title NYX Proxy Grid Launcher
+title NyxProxy Launcher
 cls
 echo ==============================================================================
-echo   ⚡ NYX PROXY GRID ENGINE  •  WINDOWS SETUP & LAUNCHER
+echo   ⚡ NYX PROXY  •  WINDOWS SETUP & LAUNCHER
 echo ==============================================================================
 echo.
 
@@ -36,7 +36,7 @@ if not exist data\config.json (
     echo { "port": "8080", "domain": "", "email": "", "auto_ssl": false, "update_proxylist_interval_hours": 1 } > data\config.json
 )
 
-echo [✓] Build successful! Starting NyxProxy Grid Engine...
+echo [✓] Build successful! Starting NyxProxy...
 echo.
 nyxProxy.exe
 pause

@@ -18,7 +18,7 @@
 
 Traditional proxy tools only scrape when manually invoked, making you wait minutes for scans to finish before getting working endpoints.
 
-**NyxProxy runs 24/7 as an autonomous background service:**
+**NyxProxy runs continuously as an autonomous background service:**
 - **Automated Re-Harvesting:** Periodically pulls fresh proxies from **100+ public sources** every **N hours** (customizable in config).
 - **Continuous Health Checking:** Actively validates protocol connectivity (HTTP, SOCKS4, SOCKS5), true latency, anonymity headers, and blacklist reputation (IPsum).
 - **Auto-Pruning:** Dead or failing proxies are automatically removed from memory.

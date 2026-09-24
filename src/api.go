@@ -21,14 +21,14 @@ const miniAppHTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NYX GLOBAL PROXY GRID</title>
+  <title>NYX PROXY - Proxy Scraper & Health Checker</title>
   
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#09090b">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="NyxGrid">
+  <meta name="apple-mobile-web-app-title" content="NyxProxy">
   <link rel="apple-touch-icon" href="/icon.svg">
   <link rel="icon" type="image/svg+xml" href="/icon.svg">
 
@@ -103,8 +103,8 @@ const miniAppHTML = `<!DOCTYPE html>
 </html>`
 
 const pwaManifest = `{
-  "name": "NYX GLOBAL PROXY GRID",
-  "short_name": "NyxGrid",
+  "name": "NYX PROXY",
+  "short_name": "NyxProxy",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",
@@ -694,7 +694,7 @@ func startWebServer(port, domain, email string) {
 			color.HiRed("  [NETWORK] HTTPS Server error: %v", err)
 		}
 	} else {
-		color.HiGreen("  [NETWORK] Grid Core active & listening on http://0.0.0.0:%s\n", port)
+		color.HiGreen("  [NETWORK] Server active & listening on http://0.0.0.0:%s\n", port)
 		err := http.ListenAndServe(":"+port, mux)
 		if err != nil {
 			color.HiRed("  [NETWORK] Server error: %v", err)

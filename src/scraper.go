@@ -408,7 +408,7 @@ func runPeriodicHarvester(intervalHours int) {
 
 		statusMu.Lock()
 		statusData.State = "IDLE"
-		statusData.CurrentTask = "Decentralized Grid Online"
+		statusData.CurrentTask = "Scraper & Checker Active"
 		statusData.LastHarvestTime = time.Now()
 		sleepDuration := time.Duration(intervalHours) * time.Hour
 		statusData.NextHarvestTime = time.Now().Add(sleepDuration)

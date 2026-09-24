@@ -117,7 +117,7 @@ func printBanner(cfg ServerConfig) {
 	steel.Println("  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ")
 	fmt.Println()
 	color.HiBlack("  ─────────────────────────────────────────────────────────────────────────────")
-	color.HiGreen("   ⚡ NYX PROXY GRID ENGINE  •  DECENTRALIZED RESILIENT PROXY INFRASTRUCTURE   ")
+	color.HiGreen("   ⚡ NYX PROXY  •  AUTOMATED PROXY SCRAPER & REAL-TIME HEALTH CHECKER         ")
 	color.HiBlack("  ─────────────────────────────────────────────────────────────────────────────")
 
 	if cfg.Domain != "" {

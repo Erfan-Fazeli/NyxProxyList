@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  ⚡ NYX PROXY GRID — ALL-IN-ONE PRODUCTION DEPLOYMENT & INSTALLER
+#  ⚡ NYX PROXY — AUTOMATED SCRAPER & HEALTH CHECKER PRODUCTION INSTALLER
 #  Repository: https://github.com/Erfan-Fazeli/NyxProxyList
 #  Author: Erfan Fazeli (NyxAgent.dev Developer Studio)
 # ==============================================================================
@@ -29,7 +29,7 @@ print_banner() {
     echo "  ╚═╝  ╚═══╝   ╚═╝  ╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   "
     echo -e "${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}"
-    echo -e "   ${MINT}⚡ NYX PROXY GRID ENGINE  •  ENTERPRISE AUTO-INSTALLER & DEPLOYMENT${NC}"
+    echo -e "   ${MINT}⚡ NYX PROXY  •  AUTOMATED SCRAPER & HEALTH CHECKER INSTALLER${NC}"
     echo -e "${GRAY}  ─────────────────────────────────────────────────────────────────────────────${NC}\n"
 }
 
@@ -192,7 +192,7 @@ echo -e "${CYAN} [*] Configuring Systemd Service (nyxproxy.service)...${NC}"
 
 cat <<EOF > /etc/systemd/system/nyxproxy.service
 [Unit]
-Description=NyxProxy Global Proxy Grid Engine & API
+Description=NyxProxy Automated Proxy Scraper & Health Checker
 After=network.target network-online.target
 Wants=network-online.target
 
